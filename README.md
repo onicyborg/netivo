@@ -7,6 +7,15 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
+## Konvensi
+
+- Semua primary key aplikasi menggunakan UUID v7 dari trait `HasUuids` pada model.
+- Migration tabel memakai `$table->uuid('id')->primary()` untuk primary key dan `$table->foreignUuid('...')` untuk foreign key UUID.
+- Asset Otika dimuat langsung dengan helper `asset()` menggunakan `ASSET_URL`; proyek ini tidak menggunakan Vite.
+- Format tampilan bersama tersedia melalui helper `format_rupiah()` dan `format_tanggal_id()`.
+
+Untuk seed data lokal, isi `SEEDER_DEFAULT_PASSWORD` di `.env` lalu jalankan `php artisan db:seed`. Nilai ini hanya untuk akun demo lokal dan tidak boleh digunakan pada deployment production.
+
 ## About Laravel
 
 Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:

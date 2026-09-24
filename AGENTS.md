@@ -5,6 +5,7 @@ Pedoman ini wajib diikuti. Sumber kebenaran UI adalah [design.md](design.md).
 ## Stack
 
 - Backend: Laravel 12 dan PHP sesuai composer.json.
+- Database pengembangan/testing: PostgreSQL. Migration dan seeder wajib tetap kompatibel dengan MySQL karena deployment menggunakan MySQL; hindari fitur SQL yang spesifik PostgreSQL tanpa fallback yang setara.
 - View/frontend: Blade dengan asset Otika yang dimuat langsung; jangan menggunakan Vite atau bundler frontend.
 - UI: Otika Admin Template berbasis Bootstrap 4, jQuery, CSS Otika, Feather Icons, Font Awesome, dan plugin halaman.
 - Listing: DataTables Otika bila diperlukan.
