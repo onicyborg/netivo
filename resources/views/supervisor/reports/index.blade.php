@@ -1,0 +1,12 @@
+@extends('layouts.app')
+
+@section('title', 'Review Laporan Harian')
+@section('page-title', 'Review Laporan Harian')
+@section('breadcrumb', 'Laporan Harian')
+
+@section('content')
+<div class="card"><div class="card-header"><h4>Daftar Laporan</h4></div><div class="card-body"><form method="GET" class="form-inline mb-3"><label for="status" class="mr-2">Status</label><select id="status" name="status" class="form-control mr-2"><option value="">Semua</option><option value="dikirim" @selected(request('status') === 'dikirim')>Dikirim</option><option value="revisi" @selected(request('status') === 'revisi')>Revisi</option><option value="diarsipkan" @selected(request('status') === 'diarsipkan')>Diarsipkan</option></select><label for="from" class="mr-2 ml-2">Dari</label><input id="from" name="from" type="date" value="{{ request('from') }}" class="form-control mr-2"><label for="to" class="mr-2">Sampai</label><input id="to" name="to" type="date" value="{{ request('to') }}" class="form-control mr-2"><button class="btn btn-light">Filter</button></form><div class="table-responsive"><table id="supervisor-reports-table" class="table table-striped"><thead><tr><th>Tanggal</th><th>Sumber</th><th>Status</th><th>Confirmed</th><th>Ditolak</th><th>Pending</th><th>Aksi</th></tr></thead><tbody>@forelse($reports as $report)<tr><td>{{ format_tanggal_id($report->report_date) }}</td><td>{{ ucfirst($report->source) }}</td><td>{{ ucfirst($report->status->value) }}</td><td>{{ $report->total_confirmed_count }} / {{ format_rupiah($report->total_confirmed_amount) }}</td><td>{{ $report->rejected_count }}</td><td>{{ $report->pending_count }}</td><td><a class="btn btn-sm btn-primary" href="{{ route('supervisor.reports.show', $report) }}">Detail</a></td></tr>@empty<tr><td colspan="7" class="text-center text-muted">Belum ada laporan.</td></tr>@endforelse</tbody></table></div>{{ $reports->links() }}</div></div>
+@endsection
+@push('styles')<link rel="stylesheet" href="{{ asset('bundles/datatables/datatables.min.css') }}">@endpush
+@push('plugin-scripts')<script src="{{ asset('bundles/datatables/datatables.min.js') }}"></script>@endpush
+@push('scripts')<script>$(function(){ $('#supervisor-reports-table').DataTable({pageLength:10,ordering:true,responsive:true,dom:'Bfrtip',buttons:['copy','csv','excel','pdf','print'],language:{search:'Cari:',emptyTable:'Belum ada laporan.',paginate:{next:'Berikutnya',previous:'Sebelumnya'}}}); });</script>@endpush

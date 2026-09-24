@@ -6,6 +6,7 @@ use App\Contracts\Notifier;
 use App\Enums\UserRole;
 use App\Models\Bill;
 use App\Models\Customer;
+use App\Models\DailyReport;
 use App\Models\Notification;
 use App\Models\Payment;
 use App\Models\Receipt;
@@ -54,5 +55,20 @@ class DatabaseNotifier implements Notifier
     {
         $payment->loadMissing('bill.customer.user');
         $this->notifyUser($payment->bill->customer->user, 'payment_rejected', 'Pembayaran ditolak', 'Pembayaran untuk tagihan '.$payment->bill->bill_number.' ditolak: '.$payment->rejection_reason, route('customer.bills.show', $payment->bill));
+    }
+
+    public function reportSent(DailyReport $report): void
+    {
+        $this->notifyRole(UserRole::SUPERVISOR, 'report_sent', 'Laporan harian dikirim', 'Laporan harian tanggal '.$report->report_date->format('d M Y').' menunggu review.', route('supervisor.reports.show', $report));
+    }
+
+    public function reportRevisionRequested(DailyReport $report): void
+    {
+        $this->notifyRole(UserRole::ADMIN, 'report_revision', 'Laporan perlu revisi', 'Laporan harian tanggal '.$report->report_date->format('d M Y').' diminta untuk diperbaiki.', route('admin.reports.show', $report));
+    }
+
+    public function reportArchived(DailyReport $report): void
+    {
+        $this->notifyRole(UserRole::ADMIN, 'report_archived', 'Laporan disetujui dan diarsipkan', 'Laporan harian tanggal '.$report->report_date->format('d M Y').' telah disetujui supervisor.', route('admin.reports.show', $report));
     }
 }

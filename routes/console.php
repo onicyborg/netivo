@@ -2,6 +2,7 @@
 
 use App\Services\Billing\BillGenerator;
 use App\Services\Billing\OverdueMarker;
+use App\Services\DailyReportGenerator;
 use Illuminate\Support\Facades\Artisan;
 
 Artisan::command('bills:generate {--period= : Periode dengan format YYYY-MM}', function (BillGenerator $generator): int {
@@ -16,3 +17,10 @@ Artisan::command('bills:mark-overdue', function (OverdueMarker $marker): int {
 
     return 0;
 })->purpose('Menandai tagihan yang melewati jatuh tempo.');
+
+Artisan::command('reports:daily', function (DailyReportGenerator $generator): int {
+    $result = $generator->generate(now()->toDateString(), 'cron');
+    $this->info($result['created'] ? 'Laporan harian dibuat.' : 'Laporan harian sudah ada, dilewati.');
+
+    return 0;
+})->purpose('Membuat laporan harian jika belum tersedia.');

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\CronLog;
 use App\Services\Billing\BillGenerator;
 use App\Services\Billing\OverdueMarker;
+use App\Services\DailyReportGenerator;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 
@@ -23,6 +24,17 @@ class CronController extends Controller
     {
         return $this->run('bills:mark-overdue', function () use ($marker): array {
             return ['created' => $marker->mark(), 'skipped' => 0, 'failed' => 0];
+        });
+    }
+
+    public function dailyReport(DailyReportGenerator $generator): JsonResponse
+    {
+        $date = now()->toDateString();
+
+        return $this->run('reports:daily', function () use ($generator, $date): array {
+            $result = $generator->generate($date, 'cron');
+
+            return ['created' => $result['created'] ? 1 : 0, 'skipped' => $result['skipped'] ? 1 : 0, 'failed' => 0];
         });
     }
 

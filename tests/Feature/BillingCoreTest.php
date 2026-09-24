@@ -83,6 +83,12 @@ class BillingCoreTest extends TestCase
             public function paymentConfirmed(Payment $payment, Receipt $receipt): void {}
 
             public function paymentRejected(Payment $payment): void {}
+
+            public function reportSent(\App\Models\DailyReport $report): void {}
+
+            public function reportRevisionRequested(\App\Models\DailyReport $report): void {}
+
+            public function reportArchived(\App\Models\DailyReport $report): void {}
         });
 
         $summary = app(BillGenerator::class)->generateForPeriod('2026-09');

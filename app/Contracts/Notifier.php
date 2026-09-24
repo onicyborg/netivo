@@ -8,6 +8,7 @@ use App\Models\Payment;
 use App\Models\Receipt;
 use App\Models\User;
 use App\Models\Notification;
+use App\Models\DailyReport;
 use App\Enums\UserRole;
 
 interface Notifier
@@ -23,4 +24,10 @@ interface Notifier
     public function paymentConfirmed(Payment $payment, Receipt $receipt): void;
 
     public function paymentRejected(Payment $payment): void;
+
+    public function reportSent(DailyReport $report): void;
+
+    public function reportRevisionRequested(DailyReport $report): void;
+
+    public function reportArchived(DailyReport $report): void;
 }

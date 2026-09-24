@@ -15,6 +15,8 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PaymentProofController;
 use App\Http\Controllers\ReceiptController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\Admin\DailyReportController as AdminDailyReportController;
+use App\Http\Controllers\Supervisor\DailyReportController as SupervisorDailyReportController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Supervisor\BillController as SupervisorBillController;
 use App\Http\Controllers\Supervisor\PaymentController as SupervisorPaymentController;
@@ -27,6 +29,7 @@ Route::get('/', function () {
 Route::middleware(['cron.token', 'throttle:cron'])->prefix('cron')->group(function (): void {
     Route::post('/generate-bills', [CronController::class, 'generateBills'])->name('cron.generate-bills');
     Route::post('/mark-overdue', [CronController::class, 'markOverdue'])->name('cron.mark-overdue');
+    Route::post('/daily-report', [CronController::class, 'dailyReport'])->name('cron.daily-report');
 });
 
 Route::middleware('guest')->group(function (): void {
@@ -50,6 +53,10 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::post('/bills/generate', [AdminBillController::class, 'generate'])->name('bills.generate');
     Route::get('/bills/{bill}', [AdminBillController::class, 'show'])->name('bills.show');
     Route::get('/cron-logs', [CronLogController::class, 'index'])->name('cron-logs.index');
+    Route::get('/reports', [AdminDailyReportController::class, 'index'])->name('reports.index');
+    Route::post('/reports', [AdminDailyReportController::class, 'store'])->name('reports.store');
+    Route::get('/reports/{report}', [AdminDailyReportController::class, 'show'])->name('reports.show');
+    Route::post('/reports/{report}/resend', [AdminDailyReportController::class, 'resend'])->name('reports.resend');
     Route::get('/payments/{payment}/proof', [PaymentProofController::class, 'show'])->name('payments.proof');
     Route::get('/payments', [AdminPaymentController::class, 'index'])->name('payments.index');
     Route::get('/payments/{payment}', [AdminPaymentController::class, 'show'])->name('payments.show');
@@ -71,6 +78,10 @@ Route::middleware(['auth', 'role:supervisor'])->prefix('supervisor')->name('supe
     Route::get('/payments/{payment}/proof', [PaymentProofController::class, 'show'])->name('payments.proof');
     Route::get('/payments', [SupervisorPaymentController::class, 'index'])->name('payments.index');
     Route::get('/payments/{payment}', [SupervisorPaymentController::class, 'show'])->name('payments.show');
+    Route::get('/reports', [SupervisorDailyReportController::class, 'index'])->name('reports.index');
+    Route::get('/reports/{report}', [SupervisorDailyReportController::class, 'show'])->name('reports.show');
+    Route::post('/reports/{report}/archive', [SupervisorDailyReportController::class, 'archive'])->name('reports.archive');
+    Route::post('/reports/{report}/revision', [SupervisorDailyReportController::class, 'revision'])->name('reports.revision');
     Route::get('/receipts/{receipt}', [ReceiptController::class, 'show'])->name('receipts.show');
 });
 

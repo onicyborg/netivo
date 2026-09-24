@@ -8,11 +8,13 @@ use App\Models\Bill;
 use App\Models\Payment;
 use App\Models\Receipt;
 use App\Models\Notification;
+use App\Models\DailyReport;
 use App\Policies\AdminPolicy;
 use App\Policies\BillPolicy;
 use App\Policies\PaymentPolicy;
 use App\Policies\ReceiptPolicy;
 use App\Policies\NotificationPolicy;
+use App\Policies\DailyReportPolicy;
 use App\Services\DatabaseNotifier;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
@@ -42,6 +44,7 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(Payment::class, PaymentPolicy::class);
         Gate::policy(Receipt::class, ReceiptPolicy::class);
         Gate::policy(Notification::class, NotificationPolicy::class);
+        Gate::policy(DailyReport::class, DailyReportPolicy::class);
 
         RateLimiter::for('login', function (Request $request): Limit {
             $email = Str::lower((string) $request->input('email'));
