@@ -25,10 +25,16 @@
                 </div>
                 <ul class="navbar-nav navbar-right">
                     <li class="dropdown dropdown-list-toggle">
-                        <a href="#" data-toggle="dropdown" class="nav-link notification-toggle nav-link-lg" aria-label="Notifikasi"><i data-feather="bell"></i><span class="badge badge-primary badge-pill">0</span></a>
+                        <a href="#" data-toggle="dropdown" class="nav-link notification-toggle nav-link-lg" aria-label="Notifikasi"><i data-feather="bell"></i><span class="badge badge-primary badge-pill">{{ $unreadNotificationCount ?? 0 }}</span></a>
                         <div class="dropdown-menu dropdown-list dropdown-menu-right">
-                            <div class="dropdown-header">Notifikasi <div class="float-right"><span class="text-muted">Segera hadir</span></div></div>
-                            <div class="dropdown-list-content dropdown-list-icons"><div class="dropdown-item text-center text-muted">Belum ada notifikasi.</div></div>
+                            <div class="dropdown-header">Notifikasi <div class="float-right"><a href="{{ route('notifications.index') }}">Lihat semua</a></div></div>
+                            <div class="dropdown-list-content dropdown-list-icons">
+                                @forelse(($navbarNotifications ?? collect()) as $notification)
+                                    <a href="{{ route('notifications.read', $notification) }}" class="dropdown-item {{ $notification->read_at ? '' : 'dropdown-item-unread' }}"><div class="dropdown-item-icon bg-{{ $notification->read_at ? 'light' : 'primary' }} text-{{ $notification->read_at ? 'muted' : 'white' }}"><i data-feather="bell"></i></div><div class="dropdown-item-desc"><strong>{{ $notification->title }}</strong><div>{{ $notification->message }}</div><small>{{ $notification->created_at->diffForHumans() }}</small></div></a>
+                                @empty
+                                    <div class="dropdown-item text-center text-muted">Belum ada notifikasi.</div>
+                                @endforelse
+                            </div>
                         </div>
                     </li>
                     <li class="dropdown">

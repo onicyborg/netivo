@@ -7,17 +7,20 @@ use App\Models\User;
 use App\Models\Bill;
 use App\Models\Payment;
 use App\Models\Receipt;
+use App\Models\Notification;
 use App\Policies\AdminPolicy;
 use App\Policies\BillPolicy;
 use App\Policies\PaymentPolicy;
 use App\Policies\ReceiptPolicy;
-use App\Services\NullNotifier;
+use App\Policies\NotificationPolicy;
+use App\Services\DatabaseNotifier;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\View;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -26,7 +29,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->bind(Notifier::class, NullNotifier::class);
+        $this->app->bind(Notifier::class, DatabaseNotifier::class);
     }
 
     /**
@@ -38,6 +41,7 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(Bill::class, BillPolicy::class);
         Gate::policy(Payment::class, PaymentPolicy::class);
         Gate::policy(Receipt::class, ReceiptPolicy::class);
+        Gate::policy(Notification::class, NotificationPolicy::class);
 
         RateLimiter::for('login', function (Request $request): Limit {
             $email = Str::lower((string) $request->input('email'));
@@ -46,5 +50,11 @@ class AppServiceProvider extends ServiceProvider
         });
 
         RateLimiter::for('cron', fn (Request $request): Limit => Limit::perMinute(10)->by($request->ip()));
+
+        View::composer('layouts.app', function ($view): void {
+            $user = auth()->user();
+            $view->with('unreadNotificationCount', $user?->notifications()->whereNull('read_at')->count() ?? 0);
+            $view->with('navbarNotifications', $user?->notifications()->latest()->limit(5)->get() ?? collect());
+        });
     }
 }

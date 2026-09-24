@@ -11,6 +11,7 @@ use App\Models\Bill;
 use App\Models\Customer;
 use App\Models\Payment;
 use App\Models\Receipt;
+use App\Models\Notification;
 use App\Models\Service;
 use App\Models\ServiceUpgradeRequest;
 use App\Models\Setting;
@@ -65,6 +66,10 @@ class BillingCoreTest extends TestCase
 
         $this->app->instance(Notifier::class, new class($failedId) implements Notifier {
             public function __construct(private readonly string $failedId) {}
+
+            public function notifyUser(User $user, string $type, string $title, string $message, ?string $url = null): Notification { return new Notification; }
+
+            public function notifyRole(UserRole|string $role, string $type, string $title, string $message, ?string $url = null): int { return 0; }
 
             public function billCreated(Customer $customer, Bill $bill): void
             {
