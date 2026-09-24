@@ -111,6 +111,7 @@ class BillGenerator
 
                         $customer->update(['service_id' => $upgrade->to_service_id]);
                         $upgrade->update(['status' => UpgradeStatus::APPLIED]);
+                        $this->notifier->upgradeApplied($upgrade->fresh(['customer.user', 'toService']));
                     });
                 }
             });

@@ -89,6 +89,14 @@ class BillingCoreTest extends TestCase
             public function reportRevisionRequested(\App\Models\DailyReport $report): void {}
 
             public function reportArchived(\App\Models\DailyReport $report): void {}
+
+            public function upgradeRequested(\App\Models\ServiceUpgradeRequest $request): void {}
+
+            public function upgradeApproved(\App\Models\ServiceUpgradeRequest $request): void {}
+
+            public function upgradeRejected(\App\Models\ServiceUpgradeRequest $request): void {}
+
+            public function upgradeApplied(\App\Models\ServiceUpgradeRequest $request): void {}
         });
 
         $summary = app(BillGenerator::class)->generateForPeriod('2026-09');

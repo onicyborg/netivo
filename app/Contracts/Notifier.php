@@ -9,6 +9,7 @@ use App\Models\Receipt;
 use App\Models\User;
 use App\Models\Notification;
 use App\Models\DailyReport;
+use App\Models\ServiceUpgradeRequest;
 use App\Enums\UserRole;
 
 interface Notifier
@@ -30,4 +31,12 @@ interface Notifier
     public function reportRevisionRequested(DailyReport $report): void;
 
     public function reportArchived(DailyReport $report): void;
+
+    public function upgradeRequested(ServiceUpgradeRequest $request): void;
+
+    public function upgradeApproved(ServiceUpgradeRequest $request): void;
+
+    public function upgradeRejected(ServiceUpgradeRequest $request): void;
+
+    public function upgradeApplied(ServiceUpgradeRequest $request): void;
 }

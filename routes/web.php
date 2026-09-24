@@ -20,6 +20,8 @@ use App\Http\Controllers\Supervisor\DailyReportController as SupervisorDailyRepo
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Supervisor\BillController as SupervisorBillController;
 use App\Http\Controllers\Supervisor\PaymentController as SupervisorPaymentController;
+use App\Http\Controllers\Admin\ServiceUpgradeController;
+use App\Http\Controllers\Customer\ServiceController as CustomerServiceController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -57,6 +59,10 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::post('/reports', [AdminDailyReportController::class, 'store'])->name('reports.store');
     Route::get('/reports/{report}', [AdminDailyReportController::class, 'show'])->name('reports.show');
     Route::post('/reports/{report}/resend', [AdminDailyReportController::class, 'resend'])->name('reports.resend');
+    Route::get('/upgrades', [ServiceUpgradeController::class, 'index'])->name('upgrades.index');
+    Route::get('/upgrades/{upgrade}', [ServiceUpgradeController::class, 'show'])->name('upgrades.show');
+    Route::post('/upgrades/{upgrade}/approve', [ServiceUpgradeController::class, 'approve'])->name('upgrades.approve');
+    Route::post('/upgrades/{upgrade}/reject', [ServiceUpgradeController::class, 'reject'])->name('upgrades.reject');
     Route::get('/payments/{payment}/proof', [PaymentProofController::class, 'show'])->name('payments.proof');
     Route::get('/payments', [AdminPaymentController::class, 'index'])->name('payments.index');
     Route::get('/payments/{payment}', [AdminPaymentController::class, 'show'])->name('payments.show');
@@ -87,6 +93,8 @@ Route::middleware(['auth', 'role:supervisor'])->prefix('supervisor')->name('supe
 
 Route::middleware(['auth', 'role:customer'])->prefix('customer')->name('customer.')->group(function (): void {
     Route::get('/dashboard', [DashboardController::class, 'customer'])->name('dashboard');
+    Route::get('/services', [CustomerServiceController::class, 'index'])->name('services.index');
+    Route::post('/services/upgrades', [CustomerServiceController::class, 'store'])->name('services.upgrades.store');
     Route::get('/bills', [CustomerBillController::class, 'index'])->name('bills.index');
     Route::get('/bills/{bill}/pay', [CustomerBillController::class, 'pay'])->name('bills.pay');
     Route::get('/bills/{bill}', [CustomerBillController::class, 'show'])->name('bills.show');

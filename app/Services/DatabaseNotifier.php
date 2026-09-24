@@ -10,6 +10,7 @@ use App\Models\DailyReport;
 use App\Models\Notification;
 use App\Models\Payment;
 use App\Models\Receipt;
+use App\Models\ServiceUpgradeRequest;
 use App\Models\User;
 
 class DatabaseNotifier implements Notifier
@@ -70,5 +71,29 @@ class DatabaseNotifier implements Notifier
     public function reportArchived(DailyReport $report): void
     {
         $this->notifyRole(UserRole::ADMIN, 'report_archived', 'Laporan disetujui dan diarsipkan', 'Laporan harian tanggal '.$report->report_date->format('d M Y').' telah disetujui supervisor.', route('admin.reports.show', $report));
+    }
+
+    public function upgradeRequested(ServiceUpgradeRequest $request): void
+    {
+        $request->loadMissing('customer.user', 'toService');
+        $this->notifyRole(UserRole::ADMIN, 'upgrade_requested', 'Pengajuan upgrade baru', 'Customer '.$request->customer->customer_number.' mengajukan upgrade ke '.$request->toService->name.'.', route('admin.upgrades.show', $request));
+    }
+
+    public function upgradeApproved(ServiceUpgradeRequest $request): void
+    {
+        $request->loadMissing('customer.user', 'toService');
+        $this->notifyUser($request->customer->user, 'upgrade_approved', 'Upgrade layanan disetujui', 'Upgrade ke '.$request->toService->name.' dijadwalkan mulai periode '.$request->effective_period.'.', route('customer.services.index'));
+    }
+
+    public function upgradeRejected(ServiceUpgradeRequest $request): void
+    {
+        $request->loadMissing('customer.user');
+        $this->notifyUser($request->customer->user, 'upgrade_rejected', 'Upgrade layanan ditolak', 'Pengajuan upgrade layanan Anda ditolak: '.$request->note, route('customer.services.index'));
+    }
+
+    public function upgradeApplied(ServiceUpgradeRequest $request): void
+    {
+        $request->loadMissing('customer.user', 'toService');
+        $this->notifyUser($request->customer->user, 'upgrade_applied', 'Upgrade layanan diterapkan', 'Layanan Anda sekarang adalah '.$request->toService->name.' untuk periode '.$request->effective_period.'.', route('customer.services.index'));
     }
 }
