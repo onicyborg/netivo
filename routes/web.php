@@ -5,12 +5,18 @@ use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\BillController as AdminBillController;
 use App\Http\Controllers\Admin\CronLogController;
 use App\Http\Controllers\Admin\PaymentMethodController;
+use App\Http\Controllers\Admin\PaymentController as AdminPaymentController;
 use App\Http\Controllers\Admin\ServiceController;
 use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\CronController;
+use App\Http\Controllers\Customer\BillController as CustomerBillController;
+use App\Http\Controllers\Customer\PaymentController as CustomerPaymentController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\PaymentProofController;
+use App\Http\Controllers\ReceiptController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Supervisor\BillController as SupervisorBillController;
+use App\Http\Controllers\Supervisor\PaymentController as SupervisorPaymentController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -40,6 +46,12 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::post('/bills/generate', [AdminBillController::class, 'generate'])->name('bills.generate');
     Route::get('/bills/{bill}', [AdminBillController::class, 'show'])->name('bills.show');
     Route::get('/cron-logs', [CronLogController::class, 'index'])->name('cron-logs.index');
+    Route::get('/payments/{payment}/proof', [PaymentProofController::class, 'show'])->name('payments.proof');
+    Route::get('/payments', [AdminPaymentController::class, 'index'])->name('payments.index');
+    Route::get('/payments/{payment}', [AdminPaymentController::class, 'show'])->name('payments.show');
+    Route::post('/payments/{payment}/confirm', [AdminPaymentController::class, 'confirm'])->name('payments.confirm');
+    Route::post('/payments/{payment}/reject', [AdminPaymentController::class, 'reject'])->name('payments.reject');
+    Route::get('/receipts/{receipt}', [ReceiptController::class, 'show'])->name('receipts.show');
     Route::get('/settings', [SettingsController::class, 'index'])->name('settings.index');
     Route::put('/settings', [SettingsController::class, 'update'])->name('settings.update');
     Route::resource('services', ServiceController::class)->except(['show', 'create', 'edit']);
@@ -52,8 +64,19 @@ Route::middleware(['auth', 'role:supervisor'])->prefix('supervisor')->name('supe
     Route::get('/dashboard', [DashboardController::class, 'supervisor'])->name('dashboard');
     Route::get('/bills', [SupervisorBillController::class, 'index'])->name('bills.index');
     Route::get('/bills/{bill}', [SupervisorBillController::class, 'show'])->name('bills.show');
+    Route::get('/payments/{payment}/proof', [PaymentProofController::class, 'show'])->name('payments.proof');
+    Route::get('/payments', [SupervisorPaymentController::class, 'index'])->name('payments.index');
+    Route::get('/payments/{payment}', [SupervisorPaymentController::class, 'show'])->name('payments.show');
+    Route::get('/receipts/{receipt}', [ReceiptController::class, 'show'])->name('receipts.show');
 });
 
 Route::middleware(['auth', 'role:customer'])->prefix('customer')->name('customer.')->group(function (): void {
     Route::get('/dashboard', [DashboardController::class, 'customer'])->name('dashboard');
+    Route::get('/bills', [CustomerBillController::class, 'index'])->name('bills.index');
+    Route::get('/bills/{bill}/pay', [CustomerBillController::class, 'pay'])->name('bills.pay');
+    Route::get('/bills/{bill}', [CustomerBillController::class, 'show'])->name('bills.show');
+    Route::get('/payments', [CustomerPaymentController::class, 'index'])->name('payments.index');
+    Route::post('/bills/{bill}/payments', [CustomerPaymentController::class, 'store'])->name('payments.store');
+    Route::get('/payments/{payment}/proof', [PaymentProofController::class, 'show'])->name('payments.proof');
+    Route::get('/receipts/{receipt}', [ReceiptController::class, 'show'])->name('receipts.show');
 });

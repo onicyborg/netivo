@@ -9,6 +9,8 @@ use App\Enums\UpgradeStatus;
 use App\Enums\UserRole;
 use App\Models\Bill;
 use App\Models\Customer;
+use App\Models\Payment;
+use App\Models\Receipt;
 use App\Models\Service;
 use App\Models\ServiceUpgradeRequest;
 use App\Models\Setting;
@@ -70,6 +72,12 @@ class BillingCoreTest extends TestCase
                     throw new \RuntimeException('Simulasi notifier gagal.');
                 }
             }
+
+            public function paymentSubmitted(Payment $payment): void {}
+
+            public function paymentConfirmed(Payment $payment, Receipt $receipt): void {}
+
+            public function paymentRejected(Payment $payment): void {}
         });
 
         $summary = app(BillGenerator::class)->generateForPeriod('2026-09');

@@ -4,7 +4,13 @@ namespace App\Providers;
 
 use App\Contracts\Notifier;
 use App\Models\User;
+use App\Models\Bill;
+use App\Models\Payment;
+use App\Models\Receipt;
 use App\Policies\AdminPolicy;
+use App\Policies\BillPolicy;
+use App\Policies\PaymentPolicy;
+use App\Policies\ReceiptPolicy;
 use App\Services\NullNotifier;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
@@ -29,6 +35,9 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Gate::policy(User::class, AdminPolicy::class);
+        Gate::policy(Bill::class, BillPolicy::class);
+        Gate::policy(Payment::class, PaymentPolicy::class);
+        Gate::policy(Receipt::class, ReceiptPolicy::class);
 
         RateLimiter::for('login', function (Request $request): Limit {
             $email = Str::lower((string) $request->input('email'));

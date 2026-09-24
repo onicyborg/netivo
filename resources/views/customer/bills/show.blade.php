@@ -1,0 +1,10 @@
+@extends('layouts.app')
+
+@section('title', 'Detail Tagihan')
+@section('page-title', 'Detail Tagihan')
+@section('breadcrumb', 'Detail Tagihan')
+
+@section('content')
+<div class="row"><div class="col-12 col-lg-7"><div class="card"><div class="card-header"><h4>Informasi Tagihan</h4><div class="card-header-action"><span class="badge badge-{{ ['belum_bayar'=>'warning','menunggu_verifikasi'=>'info','lunas'=>'success','terlambat'=>'danger'][$bill->status->value] ?? 'secondary' }}">{{ ['belum_bayar'=>'Belum Bayar','menunggu_verifikasi'=>'Menunggu Verifikasi','lunas'=>'Lunas','terlambat'=>'Terlambat'][$bill->status->value] ?? $bill->status->value }}</span></div></div><div class="card-body"><dl class="row mb-0"><dt class="col-sm-5">Nomor Tagihan</dt><dd class="col-sm-7">{{ $bill->bill_number }}</dd><dt class="col-sm-5">Periode</dt><dd class="col-sm-7">{{ $bill->period }}</dd><dt class="col-sm-5">Layanan</dt><dd class="col-sm-7">{{ $bill->service->name }}</dd><dt class="col-sm-5">Jumlah</dt><dd class="col-sm-7 font-weight-bold">{{ format_rupiah($bill->amount) }}</dd><dt class="col-sm-5">Jatuh Tempo</dt><dd class="col-sm-7">{{ format_tanggal_id($bill->due_date) }}</dd></dl></div><div class="card-footer">@if(in_array($bill->status->value, ['belum_bayar','terlambat'], true))<a href="{{ route('customer.bills.pay', $bill) }}" class="btn btn-success"><i class="fas fa-credit-card"></i> Bayar Tagihan</a>@elseif($bill->status->value === 'menunggu_verifikasi')<span class="text-info"><i class="fas fa-clock"></i> Pembayaran sedang menunggu verifikasi admin.</span>@else<span class="text-success"><i class="fas fa-check-circle"></i> Tagihan ini sudah lunas.</span>@endif</div></div></div><div class="col-12 col-lg-5"><div class="card"><div class="card-header"><h4>Bantuan</h4></div><div class="card-body"><p class="mb-0">Informasi sudah sesuai? Silakan lanjutkan pembayaran. Bila informasi tidak sesuai, hubungi admin untuk mendapatkan bantuan.</p></div></div></div></div>
+<a href="{{ route('customer.bills.index') }}" class="btn btn-light"><i class="fas fa-arrow-left"></i> Kembali ke Tagihan</a>
+@endsection

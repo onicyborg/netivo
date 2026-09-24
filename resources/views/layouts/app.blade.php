@@ -70,16 +70,18 @@
                             <li class="{{ request()->routeIs('admin.payment-methods.*') ? 'active' : '' }}"><a href="{{ route('admin.payment-methods.index') }}" class="nav-link"><i data-feather="credit-card"></i><span>Metode Pembayaran</span></a></li>
                             <li class="{{ request()->routeIs('admin.customers.*') ? 'active' : '' }}"><a href="{{ route('admin.customers.index') }}" class="nav-link"><i data-feather="users"></i><span>Customer</span></a></li>
                             <li class="{{ request()->routeIs('admin.bills.*') ? 'active' : '' }}"><a href="{{ route('admin.bills.index') }}" class="nav-link"><i data-feather="file-text"></i><span>Tagihan</span></a></li>
+                            <li class="{{ request()->routeIs('admin.payments.*') ? 'active' : '' }}"><a href="{{ route('admin.payments.index') }}" class="nav-link"><i data-feather="check-circle"></i><span>Verifikasi Pembayaran</span></a></li>
                             <li class="{{ request()->routeIs('admin.settings.*') ? 'active' : '' }}"><a href="{{ route('admin.settings.index') }}" class="nav-link"><i data-feather="settings"></i><span>Pengaturan</span></a></li>
                             <li class="{{ request()->routeIs('admin.cron-logs.*') ? 'active' : '' }}"><a href="{{ route('admin.cron-logs.index') }}" class="nav-link"><i data-feather="activity"></i><span>Log Cron</span></a></li>
                         @elseif ($roleValue === 'supervisor')
                             <li class="menu-header">PEMANTAUAN</li>
                             <li><a href="#" class="nav-link disabled" aria-disabled="true" tabindex="-1"><i data-feather="file-text"></i><span>Laporan Harian</span></a></li>
                             <li class="{{ request()->routeIs('supervisor.bills.*') ? 'active' : '' }}"><a href="{{ route('supervisor.bills.index') }}" class="nav-link"><i data-feather="credit-card"></i><span>Tagihan</span></a></li>
+                            <li class="{{ request()->routeIs('supervisor.payments.*') ? 'active' : '' }}"><a href="{{ route('supervisor.payments.index') }}" class="nav-link"><i data-feather="check-circle"></i><span>Pembayaran</span></a></li>
                         @else
                             <li class="menu-header">LAYANAN SAYA</li>
-                            <li><a href="#" class="nav-link disabled" aria-disabled="true" tabindex="-1"><i data-feather="file-text"></i><span>Tagihan Saya</span></a></li>
-                            <li><a href="#" class="nav-link disabled" aria-disabled="true" tabindex="-1"><i data-feather="credit-card"></i><span>Pembayaran</span></a></li>
+                            <li class="{{ request()->routeIs('customer.bills.*') ? 'active' : '' }}"><a href="{{ route('customer.bills.index') }}" class="nav-link"><i data-feather="file-text"></i><span>Tagihan Saya</span></a></li>
+                            <li class="{{ request()->routeIs('customer.payments.*') ? 'active' : '' }}"><a href="{{ route('customer.payments.index') }}" class="nav-link"><i data-feather="credit-card"></i><span>Pembayaran</span></a></li>
                         @endif
                         <li class="menu-header">AKUN</li>
                         <li class="{{ request()->routeIs('profile') ? 'active' : '' }}">
