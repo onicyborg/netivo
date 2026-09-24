@@ -10,6 +10,7 @@ use App\Models\Bill;
 use App\Models\Customer;
 use App\Models\ServiceUpgradeRequest;
 use App\Services\SettingService;
+use App\Services\AuditLogger;
 use Carbon\Carbon;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
@@ -20,6 +21,7 @@ class BillGenerator
     public function __construct(
         private readonly SettingService $settings,
         private readonly Notifier $notifier,
+        private readonly AuditLogger $audit,
     ) {}
 
     /** @return array{created:int, skipped:int, failed:int} */
@@ -112,6 +114,7 @@ class BillGenerator
                         $customer->update(['service_id' => $upgrade->to_service_id]);
                         $upgrade->update(['status' => UpgradeStatus::APPLIED]);
                         $this->notifier->upgradeApplied($upgrade->fresh(['customer.user', 'toService']));
+                        $this->audit->log('service_upgrade_requests', $upgrade->id, 'applied', ['status' => UpgradeStatus::APPROVED->value], ['status' => UpgradeStatus::APPLIED->value], null);
                     });
                 }
             });

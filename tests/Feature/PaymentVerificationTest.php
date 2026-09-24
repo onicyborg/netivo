@@ -30,6 +30,7 @@ class PaymentVerificationTest extends TestCase
         $this->assertDatabaseHas('bills', ['id' => $payment->bill_id, 'status' => BillStatus::LUNAS->value]);
         $this->assertDatabaseCount('receipts', 1);
         $this->assertMatchesRegularExpression('/^RCP-\d{8}-\d{4}$/', Receipt::firstOrFail()->receipt_number);
+        $this->assertDatabaseHas('system_logs', ['table_name' => 'payments', 'record_id' => $payment->id, 'action' => 'confirm', 'user_id' => $admin->id]);
     }
 
     public function test_double_confirmation_does_not_create_second_receipt(): void
@@ -54,6 +55,7 @@ class PaymentVerificationTest extends TestCase
         $this->actingAs($admin)->post(route('admin.payments.reject', $payment), ['rejection_reason' => 'Bukti tidak terbaca.'])->assertRedirect();
         $this->assertDatabaseHas('payments', ['id' => $payment->id, 'status' => PaymentStatus::REJECTED->value, 'rejection_reason' => 'Bukti tidak terbaca.']);
         $this->assertDatabaseHas('bills', ['id' => $payment->bill_id, 'status' => BillStatus::BELUM_BAYAR->value]);
+        $this->assertDatabaseHas('system_logs', ['table_name' => 'payments', 'record_id' => $payment->id, 'action' => 'reject', 'user_id' => $admin->id]);
 
         $overduePayment = Payment::factory()->create(['bill_id' => Bill::factory()->create(['due_date' => today()->subDay()])->id]);
         $this->actingAs($admin)->post(route('admin.payments.reject', $overduePayment), ['rejection_reason' => 'Bukti tidak sesuai.'])->assertRedirect();

@@ -9,6 +9,7 @@ use App\Services\Billing\BillGenerator;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use App\Services\AuditLogger;
 
 class BillController extends Controller
 {
@@ -28,11 +29,12 @@ class BillController extends Controller
         return view('bills.show', ['bill' => $bill, 'isAdmin' => true]);
     }
 
-    public function generate(Request $request, BillGenerator $generator): RedirectResponse
+    public function generate(Request $request, BillGenerator $generator, AuditLogger $audit): RedirectResponse
     {
         $this->authorize('manage', User::class);
         $validated = $request->validate(['period' => ['required', 'date_format:Y-m']]);
         $summary = $generator->generateForPeriod($validated['period']);
+        $audit->log('bills', null, 'generate_manual', [], ['period' => $validated['period'], 'summary' => $summary], $request->user());
 
         return back()->with('success', sprintf('Generate selesai: %d dibuat, %d dilewati, %d gagal.', $summary['created'], $summary['skipped'], $summary['failed']));
     }

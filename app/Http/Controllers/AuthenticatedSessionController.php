@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
+use App\Services\AuditLogger;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -17,7 +18,7 @@ class AuthenticatedSessionController extends Controller
         return view('auth.login');
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request, AuditLogger $audit): RedirectResponse
     {
         $credentials = $request->validate([
             'email' => ['required', 'email'],
@@ -44,6 +45,7 @@ class AuthenticatedSessionController extends Controller
 
         Auth::login($user, $request->boolean('remember'));
         $request->session()->regenerate();
+        $audit->log('users', $user->id, 'login', [], ['role' => $user->role->value], $user);
 
         return match ($user->role) {
             UserRole::ADMIN => redirect()->route('admin.dashboard'),
@@ -52,8 +54,10 @@ class AuthenticatedSessionController extends Controller
         };
     }
 
-    public function destroy(Request $request): RedirectResponse
+    public function destroy(Request $request, AuditLogger $audit): RedirectResponse
     {
+        $user = $request->user();
+        $audit->log('users', $user?->id, 'logout', [], [], $user);
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();

@@ -53,6 +53,7 @@ class ServiceUpgradeTest extends TestCase
             $this->assertSame('2027-01', $approved->effective_period);
             $this->assertSame($old->id, $customer->fresh()->service_id);
             $this->assertDatabaseHas('notifications', ['user_id' => $customer->user_id, 'type' => 'upgrade_approved']);
+            $this->assertDatabaseHas('system_logs', ['table_name' => 'service_upgrade_requests', 'record_id' => $upgrade->id, 'action' => 'approve']);
 
             app(BillGenerator::class)->generateForPeriod('2026-12');
             $this->assertSame($old->id, $customer->fresh()->service_id);
@@ -64,6 +65,7 @@ class ServiceUpgradeTest extends TestCase
             $this->assertSame(UpgradeStatus::APPLIED, $upgrade->fresh()->status);
             $this->assertDatabaseHas('bills', ['customer_id' => $customer->id, 'period' => '2027-01', 'service_id' => $new->id, 'amount' => '250000.00']);
             $this->assertDatabaseHas('notifications', ['user_id' => $customer->user_id, 'type' => 'upgrade_applied']);
+            $this->assertDatabaseHas('system_logs', ['table_name' => 'service_upgrade_requests', 'record_id' => $upgrade->id, 'action' => 'applied']);
         } finally {
             Carbon::setTestNow();
         }
@@ -82,6 +84,7 @@ class ServiceUpgradeTest extends TestCase
         $this->assertSame(UpgradeStatus::REJECTED, $upgrade->fresh()->status);
         $this->assertSame('Layanan belum tersedia di area Anda.', $upgrade->fresh()->note);
         $this->assertDatabaseHas('notifications', ['user_id' => $customer->user_id, 'type' => 'upgrade_rejected']);
+        $this->assertDatabaseHas('system_logs', ['table_name' => 'service_upgrade_requests', 'record_id' => $upgrade->id, 'action' => 'reject']);
     }
 
     public function test_upgrade_routes_are_authorized_by_role(): void

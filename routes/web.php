@@ -22,6 +22,7 @@ use App\Http\Controllers\Supervisor\BillController as SupervisorBillController;
 use App\Http\Controllers\Supervisor\PaymentController as SupervisorPaymentController;
 use App\Http\Controllers\Admin\ServiceUpgradeController;
 use App\Http\Controllers\Customer\ServiceController as CustomerServiceController;
+use App\Http\Controllers\SystemLogController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -55,6 +56,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::post('/bills/generate', [AdminBillController::class, 'generate'])->name('bills.generate');
     Route::get('/bills/{bill}', [AdminBillController::class, 'show'])->name('bills.show');
     Route::get('/cron-logs', [CronLogController::class, 'index'])->name('cron-logs.index');
+    Route::get('/system-logs', [SystemLogController::class, 'index'])->name('system-logs.index');
     Route::get('/reports', [AdminDailyReportController::class, 'index'])->name('reports.index');
     Route::post('/reports', [AdminDailyReportController::class, 'store'])->name('reports.store');
     Route::get('/reports/{report}', [AdminDailyReportController::class, 'show'])->name('reports.show');
@@ -85,6 +87,7 @@ Route::middleware(['auth', 'role:supervisor'])->prefix('supervisor')->name('supe
     Route::get('/payments', [SupervisorPaymentController::class, 'index'])->name('payments.index');
     Route::get('/payments/{payment}', [SupervisorPaymentController::class, 'show'])->name('payments.show');
     Route::get('/reports', [SupervisorDailyReportController::class, 'index'])->name('reports.index');
+    Route::get('/system-logs', [SystemLogController::class, 'index'])->name('system-logs.index');
     Route::get('/reports/{report}', [SupervisorDailyReportController::class, 'show'])->name('reports.show');
     Route::post('/reports/{report}/archive', [SupervisorDailyReportController::class, 'archive'])->name('reports.archive');
     Route::post('/reports/{report}/revision', [SupervisorDailyReportController::class, 'revision'])->name('reports.revision');

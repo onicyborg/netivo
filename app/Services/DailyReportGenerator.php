@@ -12,10 +12,11 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
+use App\Services\AuditLogger;
 
 class DailyReportGenerator
 {
-    public function __construct(private readonly Notifier $notifier) {}
+    public function __construct(private readonly Notifier $notifier, private readonly AuditLogger $audit) {}
 
     /** @return array{report: DailyReport, created: bool, skipped: bool} */
     public function generate(string|Carbon $date, string $source = 'manual', ?User $creator = null): array
@@ -46,6 +47,9 @@ class DailyReportGenerator
             }
 
             $this->notifier->reportSent($report);
+            if ($source === 'manual') {
+                $this->audit->log('daily_reports', $report->id, 'generate_manual', [], ['report_date' => $report->report_date->toDateString()], $creator);
+            }
 
             return ['report' => $report, 'created' => true, 'skipped' => false];
         });
@@ -69,6 +73,7 @@ class DailyReportGenerator
                 'archived_at' => null,
             ]));
             $this->notifier->reportSent($locked->fresh());
+            $this->audit->log('daily_reports', $locked->id, 'resend', [], ['report_date' => $locked->report_date->toDateString()], $creator);
 
             return $locked->fresh();
         });

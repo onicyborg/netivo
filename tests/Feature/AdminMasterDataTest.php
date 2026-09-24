@@ -110,6 +110,10 @@ class AdminMasterDataTest extends TestCase
             'password_confirmation' => 'password-baru',
         ])->assertRedirect();
         $this->assertTrue(Hash::check('password-baru', $customer->user->fresh()->password));
+        $this->assertDatabaseHas('system_logs', ['table_name' => 'users', 'record_id' => $customer->user_id, 'action' => 'reset_password', 'user_id' => $admin->id]);
+
+        $this->actingAs($admin)->post(route('admin.bills.generate'), ['period' => now()->format('Y-m')])->assertRedirect();
+        $this->assertDatabaseHas('system_logs', ['table_name' => 'bills', 'action' => 'generate_manual', 'user_id' => $admin->id]);
 
         $this->actingAs($admin)->put(route('admin.customers.update', $customer), [
             'name' => 'Customer Nonaktif',

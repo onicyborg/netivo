@@ -10,6 +10,11 @@ use App\Models\Receipt;
 use App\Models\Notification;
 use App\Models\DailyReport;
 use App\Models\ServiceUpgradeRequest;
+use App\Models\SystemLog;
+use App\Models\Setting;
+use App\Models\Service;
+use App\Models\Customer;
+use App\Models\PaymentMethod;
 use App\Policies\AdminPolicy;
 use App\Policies\BillPolicy;
 use App\Policies\PaymentPolicy;
@@ -17,6 +22,8 @@ use App\Policies\ReceiptPolicy;
 use App\Policies\NotificationPolicy;
 use App\Policies\DailyReportPolicy;
 use App\Policies\ServiceUpgradeRequestPolicy;
+use App\Policies\SystemLogPolicy;
+use App\Observers\AuditObserver;
 use App\Services\DatabaseNotifier;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
@@ -48,6 +55,11 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(Notification::class, NotificationPolicy::class);
         Gate::policy(DailyReport::class, DailyReportPolicy::class);
         Gate::policy(ServiceUpgradeRequest::class, ServiceUpgradeRequestPolicy::class);
+        Gate::policy(SystemLog::class, SystemLogPolicy::class);
+
+        foreach ([User::class, Setting::class, Service::class, Customer::class, PaymentMethod::class, Bill::class, Payment::class, Receipt::class, ServiceUpgradeRequest::class, DailyReport::class] as $model) {
+            $model::observe(AuditObserver::class);
+        }
 
         RateLimiter::for('login', function (Request $request): Limit {
             $email = Str::lower((string) $request->input('email'));

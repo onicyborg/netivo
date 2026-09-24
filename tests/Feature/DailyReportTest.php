@@ -60,11 +60,13 @@ class DailyReportTest extends TestCase
         $report = DailyReport::firstOrFail();
         $this->assertSame(ReportStatus::DIKIRIM, $report->status);
         $this->assertDatabaseHas('notifications', ['user_id' => $supervisor->id, 'type' => 'report_sent']);
+        $this->assertDatabaseHas('system_logs', ['table_name' => 'daily_reports', 'record_id' => $report->id, 'action' => 'generate_manual']);
 
         $this->actingAs($supervisor)->post(route('supervisor.reports.revision', $report), [])->assertSessionHasErrors('revision_note');
         $this->actingAs($supervisor)->post(route('supervisor.reports.revision', $report), ['revision_note' => 'Tambahkan transaksi sore.'])->assertRedirect();
         $this->assertSame(ReportStatus::REVISI, $report->fresh()->status);
         $this->assertDatabaseHas('notifications', ['user_id' => $admin->id, 'type' => 'report_revision']);
+        $this->assertDatabaseHas('system_logs', ['table_name' => 'daily_reports', 'record_id' => $report->id, 'action' => 'revise']);
 
         $this->actingAs($admin)->post(route('admin.reports.resend', $report))->assertRedirect();
         $this->assertSame(ReportStatus::DIKIRIM, $report->fresh()->status);
@@ -74,6 +76,7 @@ class DailyReportTest extends TestCase
         $this->assertSame(ReportStatus::DIARSIPKAN, $report->fresh()->status);
         $this->assertNotNull($report->fresh()->archived_at);
         $this->assertDatabaseHas('notifications', ['user_id' => $admin->id, 'type' => 'report_archived']);
+        $this->assertDatabaseHas('system_logs', ['table_name' => 'daily_reports', 'record_id' => $report->id, 'action' => 'archive']);
         $this->actingAs($admin)->post(route('admin.reports.resend', $report))->assertForbidden();
         $this->actingAs($supervisor)->post(route('supervisor.reports.archive', $report))->assertForbidden();
     }

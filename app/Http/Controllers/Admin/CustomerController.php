@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
+use App\Services\AuditLogger;
 
 class CustomerController extends Controller
 {
@@ -61,10 +62,11 @@ class CustomerController extends Controller
         return back()->with('success', 'Customer berhasil ditambahkan.');
     }
 
-    public function update(Request $request, Customer $customer): RedirectResponse
+    public function update(Request $request, Customer $customer, AuditLogger $audit): RedirectResponse
     {
         $this->authorize('manage', User::class);
         $validated = $this->validated($request, $customer);
+        $oldServiceId = $customer->service_id;
 
         DB::transaction(function () use ($validated, $customer): void {
             $customer->update([
@@ -79,6 +81,10 @@ class CustomerController extends Controller
                 'is_active' => $validated['status'] === CustomerStatus::AKTIF->value,
             ]);
         });
+
+        if ($oldServiceId !== $validated['service_id']) {
+            $audit->log('customers', $customer->id, 'assigned', ['service_id' => $oldServiceId], ['service_id' => $validated['service_id']], $request->user());
+        }
 
         return back()->with('success', 'Customer berhasil diperbarui.');
     }
@@ -100,7 +106,7 @@ class CustomerController extends Controller
         return back()->with('success', 'Customer berhasil dihapus.');
     }
 
-    public function resetPassword(Request $request, Customer $customer): RedirectResponse
+    public function resetPassword(Request $request, Customer $customer, AuditLogger $audit): RedirectResponse
     {
         $this->authorize('manage', User::class);
         $validated = $request->validate([
@@ -112,6 +118,7 @@ class CustomerController extends Controller
         ]);
 
         $customer->user->update(['password' => $validated['password']]);
+        $audit->log('users', $customer->user_id, 'reset_password', [], ['customer_id' => $customer->id], $request->user());
 
         return back()->with('success', 'Password customer berhasil direset.');
     }

@@ -16,6 +16,54 @@
 
 Untuk seed data lokal, isi `SEEDER_DEFAULT_PASSWORD` di `.env` lalu jalankan `php artisan db:seed`. Nilai ini hanya untuk akun demo lokal dan tidak boleh digunakan pada deployment production.
 
+## Setup development
+
+1. Jalankan `composer install`.
+2. Salin `.env.example` menjadi `.env`, lalu jalankan `php artisan key:generate`.
+3. Konfigurasikan PostgreSQL untuk development. Untuk deployment MySQL, ubah `DB_CONNECTION=mysql` dan isi host, port, database, username, serta password MySQL. Migration dan seeder tetap kompatibel dengan keduanya.
+4. Jalankan `php artisan migrate`.
+5. Isi `SEEDER_DEFAULT_PASSWORD` hanya dengan password lokal sementara, lalu jalankan `php artisan db:seed`.
+6. Jalankan `php artisan storage:link` hanya untuk media publik aplikasi. Bukti pembayaran tetap disimpan di disk privat dan tidak boleh dipublikasikan.
+
+Asset Otika tidak memakai Vite. `ASSET_URL` default di `.env.example` adalah `https://otika.namikulo.com/assets`; ubah hanya bila deployment memakai mirror asset yang kompatibel. File aplikasi dari storage publik menggunakan URL `/storage/...`, sedangkan asset Otika menggunakan `asset()`.
+
+Untuk membuat secret cron secara acak, jalankan:
+
+```bash
+php -r "echo bin2hex(random_bytes(32)), PHP_EOL;"
+```
+
+Masukkan hasilnya ke `CRON_SECRET` pada environment server. Jika `CRON_SECRET` kosong, seluruh endpoint cron menolak request (fail closed). Jangan menaruh nilai secret asli di repository atau log.
+
+## Cron-job.org
+
+Buat tiga job dengan timezone `Asia/Jakarta`. Gunakan domain deployment sebagai pengganti `https://app.example.test` dan nilai secret disimpan di konfigurasi secret cron-job.org, bukan di URL.
+
+| Job | URL | Metode | Header | Jadwal |
+|---|---|---|---|---|
+| Generate tagihan | `https://app.example.test/cron/generate-bills` | POST | `Authorization: Bearer <CRON_SECRET>` | Setiap hari 00:05 |
+| Tandai terlambat | `https://app.example.test/cron/mark-overdue` | POST | `Authorization: Bearer <CRON_SECRET>` | Setiap hari 00:10 |
+| Laporan harian | `https://app.example.test/cron/daily-report` | POST | `Authorization: Bearer <CRON_SECRET>` | Setiap hari 23:55 |
+
+## Perintah Artisan
+
+```bash
+php artisan migrate
+php artisan db:seed
+php artisan test
+php artisan bills:generate --period=2026-09
+php artisan bills:mark-overdue
+php artisan reports:daily
+php artisan route:list
+php artisan view:cache
+```
+
+## Audit log dan hardening
+
+`AuditLogger` dan `AuditObserver` mencatat CRUD model domain serta login, logout, reset password, generate manual, konfirmasi/penolakan pembayaran, review laporan, dan workflow upgrade ke tabel `system_logs`. Snapshot otomatis menyamarkan password, token, secret, authorization, API key, dan data biner. Admin dan supervisor dapat membaca log melalui menu Audit Log; customer tidak memiliki akses.
+
+Semua endpoint bisnis memakai middleware autentikasi dan role yang sesuai, dengan Policy untuk ownership dan aksi sensitif. Bukti pembayaran berada di disk privat, validasi upload memeriksa MIME/ekstensi/ukuran, login dan cron memiliki throttle, dan query listing memakai eager loading pada relasi yang ditampilkan.
+
 ## About Laravel
 
 Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:

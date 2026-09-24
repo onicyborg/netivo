@@ -79,6 +79,7 @@
                             <li class="{{ request()->routeIs('admin.payments.*') ? 'active' : '' }}"><a href="{{ route('admin.payments.index') }}" class="nav-link"><i data-feather="check-circle"></i><span>Verifikasi Pembayaran</span></a></li>
                             <li class="{{ request()->routeIs('admin.settings.*') ? 'active' : '' }}"><a href="{{ route('admin.settings.index') }}" class="nav-link"><i data-feather="settings"></i><span>Pengaturan</span></a></li>
                             <li class="{{ request()->routeIs('admin.cron-logs.*') ? 'active' : '' }}"><a href="{{ route('admin.cron-logs.index') }}" class="nav-link"><i data-feather="activity"></i><span>Log Cron</span></a></li>
+                            <li class="{{ request()->routeIs('admin.system-logs.*') ? 'active' : '' }}"><a href="{{ route('admin.system-logs.index') }}" class="nav-link"><i data-feather="shield"></i><span>Audit Log</span></a></li>
                             <li class="{{ request()->routeIs('admin.reports.*') ? 'active' : '' }}"><a href="{{ route('admin.reports.index') }}" class="nav-link"><i data-feather="bar-chart-2"></i><span>Laporan Harian</span></a></li>
                             <li class="{{ request()->routeIs('admin.upgrades.*') ? 'active' : '' }}"><a href="{{ route('admin.upgrades.index') }}" class="nav-link"><i data-feather="trending-up"></i><span>Upgrade Layanan</span></a></li>
                         @elseif ($roleValue === 'supervisor')
@@ -87,6 +88,7 @@
                             <li class="{{ request()->routeIs('supervisor.bills.*') ? 'active' : '' }}"><a href="{{ route('supervisor.bills.index') }}" class="nav-link"><i data-feather="credit-card"></i><span>Tagihan</span></a></li>
                             <li class="{{ request()->routeIs('supervisor.payments.*') ? 'active' : '' }}"><a href="{{ route('supervisor.payments.index') }}" class="nav-link"><i data-feather="check-circle"></i><span>Pembayaran</span></a></li>
                             <li class="{{ request()->routeIs('supervisor.reports.*') ? 'active' : '' }}"><a href="{{ route('supervisor.reports.index') }}" class="nav-link"><i data-feather="bar-chart-2"></i><span>Laporan Harian</span></a></li>
+                            <li class="{{ request()->routeIs('supervisor.system-logs.*') ? 'active' : '' }}"><a href="{{ route('supervisor.system-logs.index') }}" class="nav-link"><i data-feather="shield"></i><span>Audit Log</span></a></li>
                         @else
                             <li class="menu-header">LAYANAN SAYA</li>
                             <li class="{{ request()->routeIs('customer.bills.*') ? 'active' : '' }}"><a href="{{ route('customer.bills.index') }}" class="nav-link"><i data-feather="file-text"></i><span>Tagihan Saya</span></a></li>

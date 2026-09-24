@@ -9,10 +9,11 @@ use App\Models\ServiceUpgradeRequest;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use App\Services\AuditLogger;
 
 class ServiceUpgradeWorkflow
 {
-    public function __construct(private readonly Notifier $notifier) {}
+    public function __construct(private readonly Notifier $notifier, private readonly AuditLogger $audit) {}
 
     public function approve(ServiceUpgradeRequest $request, User $reviewer): ServiceUpgradeRequest
     {
@@ -24,6 +25,7 @@ class ServiceUpgradeWorkflow
 
             $locked->update(['status' => UpgradeStatus::APPROVED, 'effective_period' => Carbon::now(config('app.timezone'))->startOfMonth()->addMonth()->format('Y-m'), 'reviewed_by' => $reviewer->id, 'reviewed_at' => now()]);
             $this->notifier->upgradeApproved($locked->fresh(['customer.user', 'toService']));
+            $this->audit->log('service_upgrade_requests', $locked->id, 'approve', ['status' => UpgradeStatus::PENDING->value], ['status' => UpgradeStatus::APPROVED->value, 'effective_period' => $locked->effective_period], $reviewer);
 
             return $locked->fresh();
         });
@@ -39,6 +41,7 @@ class ServiceUpgradeWorkflow
 
             $locked->update(['status' => UpgradeStatus::REJECTED, 'note' => $reason, 'reviewed_by' => $reviewer->id, 'reviewed_at' => now()]);
             $this->notifier->upgradeRejected($locked->fresh(['customer.user']));
+            $this->audit->log('service_upgrade_requests', $locked->id, 'reject', ['status' => UpgradeStatus::PENDING->value], ['status' => UpgradeStatus::REJECTED->value, 'note' => $reason], $reviewer);
 
             return $locked->fresh();
         });
