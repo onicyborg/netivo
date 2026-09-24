@@ -11,4 +11,9 @@ class AdminPolicy
     {
         return $user->is_active && $user->role === UserRole::ADMIN;
     }
+
+    public function viewBilling(User $user): bool
+    {
+        return $user->is_active && in_array($user->role, [UserRole::ADMIN, UserRole::SUPERVISOR], true);
+    }
 }

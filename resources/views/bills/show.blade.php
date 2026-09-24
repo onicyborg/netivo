@@ -1,0 +1,11 @@
+@extends('layouts.app')
+
+@section('title', 'Detail Tagihan')
+@section('page-title', 'Detail Tagihan')
+@section('breadcrumb', 'Detail Tagihan')
+
+@section('content')
+<div class="row"><div class="col-12 col-lg-6"><div class="card"><div class="card-header"><h4>Informasi Tagihan</h4></div><div class="card-body"><dl class="row mb-0"><dt class="col-sm-5">Nomor Tagihan</dt><dd class="col-sm-7">{{ $bill->bill_number }}</dd><dt class="col-sm-5">Periode</dt><dd class="col-sm-7">{{ $bill->period }}</dd><dt class="col-sm-5">Layanan</dt><dd class="col-sm-7">{{ $bill->service->name }}</dd><dt class="col-sm-5">Jumlah</dt><dd class="col-sm-7">{{ format_rupiah($bill->amount) }}</dd><dt class="col-sm-5">Jatuh Tempo</dt><dd class="col-sm-7">{{ format_tanggal_id($bill->due_date) }}</dd><dt class="col-sm-5">Status</dt><dd class="col-sm-7">{{ ucfirst(str_replace('_', ' ', $bill->status->value)) }}</dd></dl></div></div></div><div class="col-12 col-lg-6"><div class="card"><div class="card-header"><h4>Customer</h4></div><div class="card-body"><dl class="row mb-0"><dt class="col-sm-5">Nomor Customer</dt><dd class="col-sm-7">{{ $bill->customer->customer_number }}</dd><dt class="col-sm-5">Nama</dt><dd class="col-sm-7">{{ $bill->customer->user->name }}</dd><dt class="col-sm-5">Email</dt><dd class="col-sm-7">{{ $bill->customer->user->email }}</dd><dt class="col-sm-5">Telepon</dt><dd class="col-sm-7">{{ $bill->customer->phone }}</dd></dl></div></div></div></div>
+<div class="card"><div class="card-header"><h4>Riwayat Pembayaran</h4></div><div class="card-body"><div class="table-responsive"><table class="table table-striped"><thead><tr><th>Tanggal</th><th>Metode</th><th>Jumlah</th><th>Status</th></tr></thead><tbody>@forelse($bill->payments as $payment)<tr><td>{{ format_tanggal_id($payment->paid_date) }}</td><td>{{ $payment->paymentMethod->name }}</td><td>{{ format_rupiah($payment->amount) }}</td><td>{{ ucfirst($payment->status->value) }}</td></tr>@empty<tr><td colspan="4" class="text-center text-muted">Belum ada pembayaran.</td></tr>@endforelse</tbody></table></div></div></div>
+<a href="{{ $isAdmin ? route('admin.bills.index') : route('supervisor.bills.index') }}" class="btn btn-light"><i class="fas fa-arrow-left"></i> Kembali</a>
+@endsection

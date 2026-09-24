@@ -2,8 +2,10 @@
 
 namespace App\Providers;
 
+use App\Contracts\Notifier;
 use App\Models\User;
 use App\Policies\AdminPolicy;
+use App\Services\NullNotifier;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\ServiceProvider;
@@ -18,7 +20,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->bind(Notifier::class, NullNotifier::class);
     }
 
     /**
@@ -33,5 +35,7 @@ class AppServiceProvider extends ServiceProvider
 
             return Limit::perMinute(5)->by($email.'|'.$request->ip());
         });
+
+        RateLimiter::for('cron', fn (Request $request): Limit => Limit::perMinute(10)->by($request->ip()));
     }
 }

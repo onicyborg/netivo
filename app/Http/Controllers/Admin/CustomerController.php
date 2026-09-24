@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Customer;
 use App\Models\Service;
 use App\Models\User;
+use App\Services\Billing\BillGenerator;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -16,6 +17,8 @@ use Illuminate\View\View;
 
 class CustomerController extends Controller
 {
+    public function __construct(private readonly BillGenerator $billGenerator) {}
+
     public function index(): View
     {
         $this->authorize('manage', User::class);
@@ -50,7 +53,9 @@ class CustomerController extends Controller
                 'status' => $validated['status'],
             ]);
 
-            // TODO Fase 4: panggil BillGenerator untuk membuat tagihan periode berjalan.
+            // BillGenerator dijalankan di dalam transaction yang sama agar customer baru
+            // langsung memiliki tagihan periode berjalan secara atomik.
+            $this->billGenerator->generateForPeriod(now()->format('Y-m'));
         });
 
         return back()->with('success', 'Customer berhasil ditambahkan.');

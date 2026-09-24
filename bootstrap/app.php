@@ -14,7 +14,9 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
             'role' => RoleMiddleware::class,
+            'cron.token' => \App\Http\Middleware\CronTokenMiddleware::class,
         ]);
+        $middleware->validateCsrfTokens(except: ['cron/*']);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
