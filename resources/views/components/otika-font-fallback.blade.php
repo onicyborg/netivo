@@ -1,8 +1,6 @@
-{{-- Font remote Otika dilayani same-origin agar tidak terkena CORS saat development/deployment. --}}
 <style>
-    @font-face { font-family: 'Nunito'; font-style: normal; font-weight: 400; font-display: swap; src: url('{{ url('/otika-fonts/nunito-v9-latin-regular.woff2') }}') format('woff2'), url('{{ url('/otika-fonts/nunito-v9-latin-regular.woff') }}') format('woff'), url('{{ url('/otika-fonts/nunito-v9-latin-regular.ttf') }}') format('truetype'); }
-    @font-face { font-family: 'Nunito'; font-style: normal; font-weight: 600; font-display: swap; src: url('{{ url('/otika-fonts/nunito-v9-latin-600.woff2') }}') format('woff2'), url('{{ url('/otika-fonts/nunito-v9-latin-600.woff') }}') format('woff'), url('{{ url('/otika-fonts/nunito-v9-latin-600.ttf') }}') format('truetype'); }
-    @font-face { font-family: 'Nunito'; font-style: normal; font-weight: 700; font-display: swap; src: url('{{ url('/otika-fonts/nunito-v9-latin-700.woff2') }}') format('woff2'), url('{{ url('/otika-fonts/nunito-v9-latin-700.woff') }}') format('woff'), url('{{ url('/otika-fonts/nunito-v9-latin-700.ttf') }}') format('truetype'); }
-    @font-face { font-family: 'Nunito'; font-style: normal; font-weight: 800; font-display: swap; src: url('{{ url('/otika-fonts/nunito-v9-latin-800.woff2') }}') format('woff2'), url('{{ url('/otika-fonts/nunito-v9-latin-800.woff') }}') format('woff'), url('{{ url('/otika-fonts/nunito-v9-latin-800.ttf') }}') format('truetype'); }
-    @font-face { font-family: 'Font Awesome 5 Free'; font-style: normal; font-weight: 900; font-display: swap; src: url('{{ url('/otika-fonts/fa-solid-900.woff2') }}') format('woff2'), url('{{ url('/otika-fonts/fa-solid-900.woff') }}') format('woff'), url('{{ url('/otika-fonts/fa-solid-900.ttf') }}') format('truetype'); }
+@font-face{font-family:'Nunito';font-style:normal;font-weight:400;font-display:swap;src:url('{{ url('/otika-fonts/nunito-v9-latin-regular.woff2') }}') format('woff2')}
+@font-face{font-family:'Nunito';font-style:normal;font-weight:700;font-display:swap;src:url('{{ url('/otika-fonts/nunito-v9-latin-700.woff2') }}') format('woff2')}
+@font-face{font-family:'Nunito';font-style:normal;font-weight:800;font-display:swap;src:url('{{ url('/otika-fonts/nunito-v9-latin-800.woff2') }}') format('woff2')}
+@font-face{font-family:'Font Awesome 5 Free';font-style:normal;font-weight:900;font-display:swap;src:url('{{ url('/otika-fonts/fa-solid-900.woff2') }}') format('woff2')}
 </style>
