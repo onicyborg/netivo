@@ -15,7 +15,7 @@ class ServiceUpgradeController extends Controller
     public function index(Request $request): View
     {
         $this->authorize('viewAny', ServiceUpgradeRequest::class);
-        $upgrades = ServiceUpgradeRequest::query()->with(['customer.user', 'fromService', 'toService', 'reviewer'])->when($request->filled('status'), fn ($query) => $query->where('status', $request->string('status')))->latest()->paginate(15)->withQueryString();
+        $upgrades = ServiceUpgradeRequest::query()->with(['customer.user', 'fromService', 'toService', 'reviewer'])->when($request->filled('status'), fn ($query) => $query->where('status', $request->string('status')))->latest()->get();
 
         return view('admin.upgrades.index', compact('upgrades'));
     }

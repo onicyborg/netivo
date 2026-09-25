@@ -13,6 +13,6 @@ class CronLogController extends Controller
     {
         $this->authorize('manage', User::class);
 
-        return view('admin.cron-logs.index', ['cronLogs' => CronLog::latest('started_at')->paginate(20)]);
+        return view('admin.cron-logs.index', ['cronLogs' => CronLog::latest('started_at')->get()]);
     }
 }

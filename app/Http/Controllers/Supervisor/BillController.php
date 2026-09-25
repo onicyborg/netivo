@@ -15,7 +15,7 @@ class BillController extends Controller
         $this->authorize('viewBilling', User::class);
 
         return view('bills.index', [
-            'bills' => $this->query($request)->paginate(10)->withQueryString(),
+            'bills' => $this->query($request)->get(),
             'isAdmin' => false,
         ]);
     }

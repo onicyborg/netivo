@@ -39,7 +39,6 @@
                 </tbody>
             </table>
         </div>
-        {{ $payments->links() }}
     </div>
 </div>
 @endsection
@@ -51,5 +50,5 @@
 <script src="{{ asset('bundles/datatables/datatables.min.js') }}"></script>
 @endpush
 @push('scripts')
-<script>$(function(){ $('#admin-payments-table').DataTable({pageLength:10,ordering:true,responsive:true,searching:true,language:{emptyTable:'Belum ada pembayaran.',search:'Cari:',lengthMenu:'Tampilkan _MENU_',info:'Menampilkan _START_ sampai _END_ dari _TOTAL_ pembayaran',paginate:{next:'Berikutnya',previous:'Sebelumnya'}}}); });</script>
+<script>$(function(){ $('#admin-payments-table').DataTable({pageLength:10,ordering:true,responsive:true}); });</script>
 @endpush

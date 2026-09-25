@@ -19,7 +19,7 @@ class DailyReportController extends Controller
         $reports = DailyReport::query()->with(['creator', 'reviewer'])
             ->when($request->filled('status'), fn ($query) => $query->where('status', $request->string('status')))
             ->when($request->filled('date'), fn ($query) => $query->whereDate('report_date', $request->date('date')))
-            ->latest('report_date')->paginate(15)->withQueryString();
+            ->latest('report_date')->get();
 
         return view('admin.reports.index', compact('reports'));
     }

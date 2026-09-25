@@ -21,8 +21,7 @@ class PaymentController extends Controller
             ->with(['bill.customer.user', 'bill.service', 'paymentMethod', 'receipt'])
             ->when($status !== 'all', fn ($query) => $query->where('status', $status))
             ->latest()
-            ->paginate(10)
-            ->withQueryString();
+            ->get();
 
         return view('admin.payments.index', compact('payments', 'status'));
     }
