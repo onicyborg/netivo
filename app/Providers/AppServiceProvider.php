@@ -73,6 +73,13 @@ class AppServiceProvider extends ServiceProvider
             $user = auth()->user();
             $view->with('unreadNotificationCount', $user?->notifications()->whereNull('read_at')->count() ?? 0);
             $view->with('navbarNotifications', $user?->notifications()->latest()->limit(5)->get() ?? collect());
+            $view->with('userPreferences', array_merge([
+                'theme' => 'light',
+                'sidebar' => 'expanded',
+                'navbar' => 'sticky',
+                'sidebar_color' => 'light',
+                'color_theme' => 'white',
+            ], $user?->preferences ?? []));
         });
     }
 }

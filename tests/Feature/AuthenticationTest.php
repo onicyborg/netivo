@@ -103,4 +103,25 @@ class AuthenticationTest extends TestCase
 
         $this->assertTrue(Hash::check('new-password', $user->fresh()->password));
     }
+
+    public function test_user_can_persist_personal_display_preferences(): void
+    {
+        $user = User::factory()->create();
+
+        $this->actingAs($user)->put(route('preferences.update'), [
+            'theme' => 'dark',
+            'sidebar' => 'compact',
+            'navbar' => 'static',
+            'sidebar_color' => 'dark',
+            'color_theme' => 'purple',
+        ])->assertRedirect();
+
+        $this->assertSame([
+            'theme' => 'dark',
+            'sidebar' => 'compact',
+            'navbar' => 'static',
+            'sidebar_color' => 'dark',
+            'color_theme' => 'purple',
+        ], $user->fresh()->preferences);
+    }
 }

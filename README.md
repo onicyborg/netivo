@@ -14,7 +14,11 @@
 - Asset Otika dimuat langsung dengan helper `asset()` menggunakan `ASSET_URL`; proyek ini tidak menggunakan Vite.
 - Format tampilan bersama tersedia melalui helper `format_rupiah()` dan `format_tanggal_id()`.
 
-Untuk seed data lokal, isi `SEEDER_DEFAULT_PASSWORD` di `.env` lalu jalankan `php artisan db:seed`. Nilai ini hanya untuk akun demo lokal dan tidak boleh digunakan pada deployment production.
+Seeder menyediakan akun demo development berikut. Password semua akun adalah `Qwerty123*`; akun dan password ini hanya untuk development dan tidak boleh digunakan pada deployment production:
+
+- Admin: `admin@example.com`
+- Supervisor: `supervisor@example.com`
+- Customer: `customer1@example.com` sampai `customer10@example.com`
 
 ## Setup development
 
@@ -22,7 +26,7 @@ Untuk seed data lokal, isi `SEEDER_DEFAULT_PASSWORD` di `.env` lalu jalankan `ph
 2. Salin `.env.example` menjadi `.env`, lalu jalankan `php artisan key:generate`.
 3. Konfigurasikan PostgreSQL untuk development. Untuk deployment MySQL, ubah `DB_CONNECTION=mysql` dan isi host, port, database, username, serta password MySQL. Migration dan seeder tetap kompatibel dengan keduanya.
 4. Jalankan `php artisan migrate`.
-5. Isi `SEEDER_DEFAULT_PASSWORD` hanya dengan password lokal sementara, lalu jalankan `php artisan db:seed`.
+5. Jalankan `php artisan db:seed` untuk membuat akun admin, supervisor, 10 customer, layanan, metode pembayaran, dan settings demo.
 6. Jalankan `php artisan storage:link` hanya untuk media publik aplikasi. Bukti pembayaran tetap disimpan di disk privat dan tidak boleh dipublikasikan.
 
 Asset Otika tidak memakai Vite. `ASSET_URL` default di `.env.example` adalah `https://otika.namikulo.com/assets`; ubah hanya bila deployment memakai mirror asset yang kompatibel. File aplikasi dari storage publik menggunakan URL `/storage/...`, sedangkan asset Otika menggunakan `asset()`.

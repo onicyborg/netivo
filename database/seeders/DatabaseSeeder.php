@@ -13,7 +13,6 @@ use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
-use RuntimeException;
 
 class DatabaseSeeder extends Seeder
 {
@@ -24,20 +23,17 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $password = env('SEEDER_DEFAULT_PASSWORD');
-
-        if (! is_string($password) || $password === '') {
-            throw new RuntimeException('SEEDER_DEFAULT_PASSWORD harus diisi di .env lokal sebelum menjalankan seeder.');
-        }
+        // Kredensial berikut khusus untuk data demo development, bukan production.
+        $password = 'Qwerty123*';
 
         DB::transaction(function () use ($password): void {
             User::updateOrCreate(
-                ['email' => 'admin@netivo.test'],
+                ['email' => 'admin@example.com'],
                 ['name' => 'Admin Netivo', 'password' => $password, 'role' => UserRole::ADMIN, 'is_active' => true],
             );
 
             User::updateOrCreate(
-                ['email' => 'supervisor@netivo.test'],
+                ['email' => 'supervisor@example.com'],
                 ['name' => 'Supervisor Netivo', 'password' => $password, 'role' => UserRole::SUPERVISOR, 'is_active' => true],
             );
 
@@ -65,11 +61,15 @@ class DatabaseSeeder extends Seeder
                 Setting::updateOrCreate(['key' => $key], ['value' => $value]);
             }
 
-            foreach ([
-                ['name' => 'Andi Demo', 'email' => 'andi@netivo.test', 'phone' => '081200000001', 'service' => 'Netivo Basic'],
-                ['name' => 'Budi Demo', 'email' => 'budi@netivo.test', 'phone' => '081200000002', 'service' => 'Netivo Family'],
-                ['name' => 'Citra Demo', 'email' => 'citra@netivo.test', 'phone' => '081200000003', 'service' => 'Netivo Pro'],
-            ] as $index => $data) {
+            foreach (range(1, 10) as $index) {
+                $serviceNames = ['Netivo Basic', 'Netivo Family', 'Netivo Pro'];
+                $serviceName = $serviceNames[($index - 1) % count($serviceNames)];
+                $data = [
+                    'name' => 'Customer Demo '.$index,
+                    'email' => 'customer'.$index.'@example.com',
+                    'phone' => '081200000'.str_pad((string) $index, 2, '0', STR_PAD_LEFT),
+                    'service' => $serviceName,
+                ];
                 $user = User::updateOrCreate(
                     ['email' => $data['email']],
                     ['name' => $data['name'], 'password' => $password, 'role' => UserRole::CUSTOMER, 'is_active' => true],
@@ -77,7 +77,7 @@ class DatabaseSeeder extends Seeder
 
                 Customer::updateOrCreate(
                     ['user_id' => $user->id],
-                    ['service_id' => $services[$data['service']]->id, 'customer_number' => sprintf('CUST-%06d', $index + 1), 'phone' => $data['phone'], 'address' => 'Alamat customer demo '.$data['name'], 'registered_at' => today(), 'status' => CustomerStatus::AKTIF],
+                    ['service_id' => $services[$data['service']]->id, 'customer_number' => sprintf('CUST-%06d', $index), 'phone' => $data['phone'], 'address' => 'Alamat customer demo '.$data['name'], 'registered_at' => today(), 'status' => CustomerStatus::AKTIF],
                 );
             }
         });

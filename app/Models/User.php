@@ -26,6 +26,7 @@ class User extends Authenticatable
         'password',
         'role',
         'is_active',
+        'preferences',
     ];
 
     /**
@@ -50,7 +51,18 @@ class User extends Authenticatable
             'password' => 'hashed',
             'role' => UserRole::class,
             'is_active' => 'boolean',
+            'preferences' => 'array',
         ];
+    }
+
+    public function preference(string $key, mixed $default = null): mixed
+    {
+        return data_get($this->preferences ?? [], $key, $default);
+    }
+
+    public function updatePreferences(array $preferences): void
+    {
+        $this->forceFill(['preferences' => array_replace_recursive($this->preferences ?? [], $preferences)])->save();
     }
 
     public function customer(): \Illuminate\Database\Eloquent\Relations\HasOne

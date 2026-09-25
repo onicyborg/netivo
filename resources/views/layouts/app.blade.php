@@ -9,14 +9,17 @@
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
     <link rel="stylesheet" href="{{ asset('css/components.css') }}">
     <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
+    @include('components.otika-font-fallback')
+    @include('components.netivo-design-system')
     @stack('styles')
 </head>
-<body>
+@php($preferences = $userPreferences ?? ['theme' => 'light', 'sidebar' => 'expanded', 'navbar' => 'sticky', 'sidebar_color' => 'light', 'color_theme' => 'white'])
+<body class="{{ $preferences['theme'] === 'dark' ? 'dark' : 'light' }} {{ $preferences['sidebar_color'] === 'dark' ? 'dark-sidebar' : 'light-sidebar' }} theme-{{ $preferences['color_theme'] }} {{ $preferences['sidebar'] === 'compact' ? 'sidebar-mini' : '' }} {{ $preferences['navbar'] === 'static' ? 'navbar-static' : '' }}">
     <div class="loader"></div>
     <div id="app">
         <div class="main-wrapper main-wrapper-1">
             <div class="navbar-bg"></div>
-            <nav class="navbar navbar-expand-lg main-navbar sticky">
+            <nav class="navbar navbar-expand-lg main-navbar {{ $preferences['navbar'] === 'sticky' ? 'sticky' : '' }}">
                 <div class="form-inline mr-auto">
                     <ul class="navbar-nav mr-3">
                         <li><a href="#" data-toggle="sidebar" class="nav-link nav-link-lg collapse-btn" aria-label="Buka atau tutup menu"><i data-feather="align-justify"></i></a></li>
@@ -38,9 +41,9 @@
                         </div>
                     </li>
                     <li class="dropdown">
-                        <a href="#" data-toggle="dropdown" class="nav-link dropdown-toggle nav-link-lg nav-link-user">
+                        <a href="#" data-toggle="dropdown" class="nav-link dropdown-toggle nav-link-lg nav-link-user antre-profile" aria-label="Buka menu pengguna">
                             <img alt="Foto profil default" src="{{ asset('img/user.png') }}" class="user-img-radious-style">
-                            <span class="d-sm-none d-lg-inline-block">{{ auth()->user()->name }}</span>
+                            <span class="antre-profile__copy d-none d-sm-inline-flex"><span class="antre-profile__name">{{ auth()->user()->name }}</span><small>{{ ucfirst(auth()->user()->role->value) }}</small></span>
                         </a>
                         <div class="dropdown-menu dropdown-menu-right">
                             <div class="dropdown-title">Masuk sebagai {{ auth()->user()->role->value }}</div>
@@ -60,10 +63,6 @@
                     @php($roleValue = auth()->user()->role->value)
                     <div class="sidebar-brand">
                         <a href="{{ route('dashboard') }}"><img src="{{ asset('img/logo.png') }}" alt="Logo Netivo" class="header-logo"><span class="logo-name">Netivo</span></a>
-                    </div>
-                    <div class="sidebar-user">
-                        <div class="sidebar-user-picture"><img alt="Foto profil default" src="{{ asset('img/user.png') }}"></div>
-                        <div class="sidebar-user-details"><div class="user-name">{{ auth()->user()->name }}</div><div class="user-role">{{ ucfirst(auth()->user()->role->value) }}</div></div>
                     </div>
                     <ul class="sidebar-menu">
                         <li class="menu-header">MENU UTAMA</li>
@@ -119,6 +118,45 @@
                 </section>
             </div>
 
+            <aside class="settingSidebar" aria-label="Panel pengaturan tampilan">
+                <a href="javascript:void(0)" class="settingPanelToggle" aria-label="Buka atau tutup panel tampilan"><i class="fa fa-spin fa-cog" aria-hidden="true"></i></a>
+                <div class="settingSidebar-body ps-container ps-theme-default">
+                    <form method="POST" action="{{ route('preferences.update') }}" id="display-preferences-form">
+                        @csrf
+                        @method('PUT')
+                        <div class="setting-panel-header">Panel Tampilan</div>
+                        <div class="p-15 border-bottom">
+                            <h6 class="font-medium m-b-10">Pilih Layout</h6>
+                            <div class="selectgroup layout-color w-50">
+                                <label class="selectgroup-item"><input type="radio" name="theme_choice" value="1" class="selectgroup-input-radio select-layout" @checked($preferences['theme'] === 'light')><span class="selectgroup-button">Terang</span></label>
+                                <label class="selectgroup-item"><input type="radio" name="theme_choice" value="2" class="selectgroup-input-radio select-layout" @checked($preferences['theme'] === 'dark')><span class="selectgroup-button">Gelap</span></label>
+                                <input type="hidden" name="theme" id="preference-theme" value="{{ $preferences['theme'] }}">
+                            </div>
+                        </div>
+                        <div class="p-15 border-bottom">
+                            <h6 class="font-medium m-b-10">Warna Sidebar</h6>
+                            <div class="selectgroup selectgroup-pills sidebar-color">
+                                <label class="selectgroup-item"><input type="radio" name="sidebar_color_choice" value="1" class="selectgroup-input select-sidebar" @checked($preferences['sidebar_color'] === 'light')><span class="selectgroup-button selectgroup-button-icon" data-toggle="tooltip" title="Sidebar terang"><i class="fas fa-sun" aria-hidden="true"></i><span class="sr-only">Sidebar terang</span></span></label>
+                                <label class="selectgroup-item"><input type="radio" name="sidebar_color_choice" value="2" class="selectgroup-input select-sidebar" @checked($preferences['sidebar_color'] === 'dark')><span class="selectgroup-button selectgroup-button-icon" data-toggle="tooltip" title="Sidebar gelap"><i class="fas fa-moon" aria-hidden="true"></i><span class="sr-only">Sidebar gelap</span></span></label>
+                                <input type="hidden" name="sidebar_color" id="preference-sidebar-color" value="{{ $preferences['sidebar_color'] }}">
+                            </div>
+                        </div>
+                        <div class="p-15 border-bottom">
+                            <h6 class="font-medium m-b-10">Warna Tema</h6>
+                            <ul class="choose-theme list-unstyled mb-0" aria-label="Pilih warna tema">
+                                @foreach(['white', 'cyan', 'black', 'purple', 'orange', 'green', 'red'] as $color)
+                                    <li title="{{ $color }}" class="{{ $preferences['color_theme'] === $color ? 'active' : '' }}"><button type="button" class="theme-swatch {{ $color }}" data-theme-color="{{ $color }}" aria-label="Tema {{ ucfirst($color) }}"></button></li>
+                                @endforeach
+                            </ul>
+                            <input type="hidden" name="color_theme" id="preference-color-theme" value="{{ $preferences['color_theme'] }}">
+                        </div>
+                        <div class="p-15 border-bottom"><input type="hidden" name="sidebar" value="expanded"><label class="m-b-0 custom-switch"><input type="checkbox" name="sidebar" value="compact" class="custom-switch-input" id="mini_sidebar_setting" @checked($preferences['sidebar'] === 'compact')><span class="custom-switch-indicator"></span><span class="control-label p-l-10">Sidebar ringkas</span></label></div>
+                        <div class="p-15 border-bottom"><input type="hidden" name="navbar" value="static"><label class="m-b-0 custom-switch"><input type="checkbox" name="navbar" value="sticky" class="custom-switch-input" id="sticky_header_setting" @checked($preferences['navbar'] === 'sticky')><span class="custom-switch-indicator"></span><span class="control-label p-l-10">Header mengikuti layar</span></label></div>
+                        <div class="mt-4 mb-4 p-3 align-center rt-sidebar-last-ele"><button type="button" class="btn btn-light btn-restore-theme"><i class="fas fa-undo" aria-hidden="true"></i> Pulihkan default</button><button type="submit" class="btn btn-primary btn-block mt-3"><i class="fas fa-save" aria-hidden="true"></i> Simpan preferensi</button></div>
+                    </form>
+                </div>
+            </aside>
+
             <footer class="main-footer">
                 <div class="footer-left">Copyright &copy; {{ date('Y') }} Netivo</div>
                 <div class="footer-right">Sistem Pembayaran Billing Internet</div>
@@ -130,6 +168,8 @@
     @stack('config-scripts')
     <script src="{{ asset('js/scripts.js') }}"></script>
     <script src="{{ asset('js/custom.js') }}"></script>
+    @include('components.modal-fix')
+    @include('components.otika-preferences-script', ['preferences' => $preferences])
     @stack('scripts')
 </body>
 </html>

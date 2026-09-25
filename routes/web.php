@@ -23,11 +23,17 @@ use App\Http\Controllers\Supervisor\PaymentController as SupervisorPaymentContro
 use App\Http\Controllers\Admin\ServiceUpgradeController;
 use App\Http\Controllers\Customer\ServiceController as CustomerServiceController;
 use App\Http\Controllers\SystemLogController;
+use App\Http\Controllers\UserPreferenceController;
+use App\Http\Controllers\OtikaFontController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return auth()->check() ? redirect()->route('dashboard') : redirect()->route('login');
 });
+
+Route::get('/otika-fonts/{font}', [OtikaFontController::class, 'show'])
+    ->where('font', '[A-Za-z0-9._-]+')
+    ->name('otika.font');
 
 Route::middleware(['cron.token', 'throttle:cron'])->prefix('cron')->group(function (): void {
     Route::post('/generate-bills', [CronController::class, 'generateBills'])->name('cron.generate-bills');
@@ -44,6 +50,7 @@ Route::middleware('auth')->group(function (): void {
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
     Route::get('/dashboard', [DashboardController::class, 'redirect'])->name('dashboard');
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
+    Route::put('/preferences', [UserPreferenceController::class, 'update'])->name('preferences.update');
     Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('password.update');
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
     Route::get('/notifications/{notification}/read', [NotificationController::class, 'read'])->name('notifications.read');
