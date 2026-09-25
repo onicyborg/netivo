@@ -32,13 +32,61 @@
         <div class="card"><div class="card-header"><h4>Customer</h4></div><div class="card-body"><dl class="row mb-0"><dt class="col-5">Nama</dt><dd class="col-7">{{ $payment->bill->customer->user->name }}</dd><dt class="col-5">Nomor customer</dt><dd class="col-7">{{ $payment->bill->customer->customer_number }}</dd><dt class="col-5">Email</dt><dd class="col-7">{{ $payment->bill->customer->user->email }}</dd><dt class="col-5">HP</dt><dd class="col-7">{{ $payment->bill->customer->phone }}</dd><dt class="col-5">Alamat</dt><dd class="col-7">{{ $payment->bill->customer->address }}</dd></dl></div></div>
         <div class="card"><div class="card-header"><h4>Tagihan</h4></div><div class="card-body"><dl class="row mb-0"><dt class="col-5">Nomor</dt><dd class="col-7">{{ $payment->bill->bill_number }}</dd><dt class="col-5">Periode</dt><dd class="col-7">{{ $payment->bill->period }}</dd><dt class="col-5">Layanan</dt><dd class="col-7">{{ $payment->bill->service->name }}</dd><dt class="col-5">Jatuh tempo</dt><dd class="col-7">{{ format_tanggal_id($payment->bill->due_date) }}</dd><dt class="col-5">Jumlah</dt><dd class="col-7">{{ format_rupiah($payment->bill->amount) }}</dd></dl></div></div>
         @if($payment->status->value === 'pending')
-            <div class="card"><div class="card-header"><h4>Keputusan Verifikasi</h4></div><div class="card-body"><form method="POST" action="{{ route('admin.payments.confirm', $payment) }}" class="mb-2">@csrf<button type="submit" class="btn btn-success btn-block" onclick="return confirm('Konfirmasi pembayaran ini?')"><i class="fas fa-check"></i> Konfirmasi Pembayaran</button></form><button type="button" class="btn btn-danger btn-block" data-toggle="modal" data-target="#reject-payment-modal"><i class="fas fa-times"></i> Tolak Pembayaran</button></div></div>
+            <div class="card"><div class="card-header"><h4>Keputusan Verifikasi</h4></div><div class="card-body">
+                <form id="confirm-payment-form" method="POST" action="{{ route('admin.payments.confirm', $payment) }}" class="mb-2">@csrf<button id="confirm-payment-button" type="button" class="btn btn-success btn-block"><i class="fas fa-check"></i> Konfirmasi Pembayaran</button></form>
+                <button id="reject-payment-button" type="button" class="btn btn-danger btn-block"><i class="fas fa-times"></i> Tolak Pembayaran</button>
+                <form id="reject-payment-form" method="POST" action="{{ route('admin.payments.reject', $payment) }}" class="d-none">@csrf<input id="rejection-reason-value" type="hidden" name="rejection_reason"></form>
+            </div></div>
         @elseif($payment->receipt)
             <div class="alert alert-success">Kuitansi: <a target="_blank" rel="noopener" href="{{ route('admin.receipts.show', $payment->receipt) }}">{{ $payment->receipt->receipt_number }}</a></div>
         @endif
     </div>
 </div>
-@if($payment->status->value === 'pending')
-<div class="modal fade" id="reject-payment-modal" tabindex="-1" role="dialog" aria-labelledby="reject-payment-title" aria-hidden="true"><div class="modal-dialog" role="document"><div class="modal-content"><form method="POST" action="{{ route('admin.payments.reject', $payment) }}">@csrf<div class="modal-header"><h5 class="modal-title" id="reject-payment-title">Tolak Pembayaran</h5><button type="button" class="close" data-dismiss="modal" aria-label="Tutup"><span aria-hidden="true">&times;</span></button></div><div class="modal-body"><div class="form-group"><label for="rejection_reason">Alasan penolakan <span class="text-danger">*</span></label><textarea id="rejection_reason" name="rejection_reason" rows="4" required class="form-control @error('rejection_reason') is-invalid @enderror">{{ old('rejection_reason') }}</textarea>@error('rejection_reason')<div class="invalid-feedback">{{ $message }}</div>@enderror</div></div><div class="modal-footer"><button type="button" class="btn btn-light" data-dismiss="modal">Batal</button><button type="submit" class="btn btn-danger">Tolak Pembayaran</button></div></form></div></div></div>
-@endif
 @endsection
+
+@push('scripts')
+<script>
+    $(function () {
+        $('#confirm-payment-button').on('click', function () {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Konfirmasi pembayaran?',
+                text: 'Pembayaran ini akan ditandai sebagai dikonfirmasi dan kuitansi akan dibuat.',
+                showCancelButton: true,
+                confirmButtonText: 'Ya, konfirmasi',
+                cancelButtonText: 'Batal',
+                reverseButtons: true,
+                focusCancel: true
+            }).then(function (result) {
+                if (result.isConfirmed) {
+                    $('#confirm-payment-form').trigger('submit');
+                }
+            });
+        });
+
+        $('#reject-payment-button').on('click', function () {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Tolak pembayaran?',
+                input: 'textarea',
+                inputLabel: 'Alasan penolakan',
+                inputPlaceholder: 'Tuliskan alasan penolakan...',
+                inputAttributes: { 'aria-label': 'Alasan penolakan' },
+                inputValidator: function (value) {
+                    return !value || !value.trim() ? 'Alasan penolakan wajib diisi.' : undefined;
+                },
+                showCancelButton: true,
+                confirmButtonText: 'Ya, tolak pembayaran',
+                cancelButtonText: 'Batal',
+                reverseButtons: true,
+                focusCancel: true
+            }).then(function (result) {
+                if (result.isConfirmed) {
+                    $('#rejection-reason-value').val(result.value.trim());
+                    $('#reject-payment-form').trigger('submit');
+                }
+            });
+        });
+    });
+</script>
+@endpush
