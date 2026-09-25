@@ -5,10 +5,11 @@
 @section('breadcrumb', 'Audit Log')
 
 @section('content')
+<div class="audit-log-page">
 <div class="card">
     <div class="card-header"><h4>System Logs</h4></div>
     <div class="card-body">
-        <form method="GET" class="form-inline mb-3">
+        <form method="GET" class="form-inline mb-4 audit-log-filters">
             <label for="date_from" class="mr-2">Dari</label>
             <input id="date_from" name="date_from" type="date" value="{{ request('date_from') }}" class="form-control mr-2">
             <label for="date_to" class="mr-2">Sampai</label>
@@ -26,7 +27,7 @@
         </form>
 
         <div class="table-responsive">
-            <table id="system-logs-table" class="table table-striped">
+            <table id="system-logs-table" class="table table-striped audit-log-table">
                 <thead><tr><th>Waktu</th><th>User</th><th>Aksi</th><th>Tabel/Record</th><th>Method</th><th>URL</th><th>Snapshot</th></tr></thead>
                 <tbody>
                 @forelse($logs as $log)
@@ -74,10 +75,42 @@
         </div>
     </div>
 </div>
+</div>
 @endsection
 
 @push('styles')
 <link rel="stylesheet" href="{{ asset('bundles/datatables/datatables.min.css') }}">
+<style>
+    .audit-log-page .card { overflow: visible; }
+    .audit-log-filters { display: flex; align-items: flex-end; flex-wrap: wrap; gap: .65rem .75rem; }
+    .audit-log-filters label { margin: 0; color: #6c757d; font-size: 12px; font-weight: 600; }
+    .audit-log-filters .form-control { min-width: 150px; margin: 0 !important; }
+    .audit-log-filters #user_id { min-width: 230px; }
+    .audit-log-filters #action { min-width: 180px; }
+    .audit-log-filters .btn { margin: 0; }
+    .audit-log-page .table-responsive { overflow-x: auto; }
+    .audit-log-table { min-width: 980px; margin-bottom: 0; }
+    .audit-log-table th, .audit-log-table td { vertical-align: middle; }
+    .audit-log-table th { color: #6c757d; font-size: 11px; letter-spacing: .03em; text-transform: uppercase; white-space: nowrap; }
+    .audit-log-table td { color: #4b5563; font-size: 13px; }
+    .audit-log-table th:nth-child(1), .audit-log-table td:nth-child(1) { width: 145px; white-space: nowrap; }
+    .audit-log-table th:nth-child(3), .audit-log-table td:nth-child(3) { width: 105px; }
+    .audit-log-table th:nth-child(5), .audit-log-table td:nth-child(5) { width: 78px; white-space: nowrap; }
+    .audit-log-table th:nth-child(7), .audit-log-table td:nth-child(7) { width: 145px; white-space: nowrap; }
+    .audit-log-table td:nth-child(4), .audit-log-table td:nth-child(6) { max-width: 240px; overflow-wrap: anywhere; }
+    .audit-log-table .btn { white-space: nowrap; }
+    .audit-log-page .dataTables_wrapper { padding: 0; }
+    .audit-log-page .dataTables_wrapper .dataTables_info,
+    .audit-log-page .dataTables_wrapper .dataTables_paginate,
+    .audit-log-page .dataTables_wrapper .dataTables_length,
+    .audit-log-page .dataTables_wrapper .dataTables_filter { display: none; }
+    .audit-log-page .pagination { margin-top: 1.25rem; margin-bottom: 0; }
+    @media (max-width: 767.98px) {
+        .audit-log-filters { display: grid; grid-template-columns: 1fr 1fr; align-items: end; }
+        .audit-log-filters .form-control, .audit-log-filters #user_id, .audit-log-filters #action { min-width: 0; width: 100%; }
+        .audit-log-filters .btn { width: 100%; }
+    }
+</style>
 @endpush
 @push('plugin-scripts')
 <script src="{{ asset('bundles/datatables/datatables.min.js') }}"></script>
@@ -89,7 +122,12 @@
             pageLength: 25,
             ordering: true,
             responsive: true,
-            language: { search: 'Cari:', emptyTable: 'Belum ada audit log.', paginate: { next: 'Berikutnya', previous: 'Sebelumnya' } }
+            searching: false,
+            paging: false,
+            info: false,
+            lengthChange: false,
+            dom: 't',
+            language: { emptyTable: 'Belum ada audit log.' }
         });
 
         $(document).on('click', '.js-view-audit-snapshot', function () {
