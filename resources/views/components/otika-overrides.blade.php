@@ -1,6 +1,11 @@
 <style>
     html body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif !important; }
     .header-logo { object-fit: contain; }
+    .main-navbar .nav-link-user,
+    .main-navbar .nav-link-user > span { color: #34395e !important; }
+    .main-navbar .nav-link-user:hover,
+    .main-navbar .nav-link-user:focus,
+    .main-navbar .nav-link-user[aria-expanded="true"] { color: #6777ef !important; }
     .settingSidebar { z-index: 1100; }
     .settingSidebar .choose-theme { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; margin: 0; }
     .settingSidebar .theme-swatch { width: 24px; height: 24px; padding: 0; border: 0; border-radius: 50%; cursor: pointer; }

@@ -1,1 +1,8 @@
-<div class="col-12 col-sm-6 col-lg-3"><div class="card card-statistic-1"><div class="card-icon bg-{{ $color ?? 'primary' }}"><i class="fas fa-{{ $icon ?? 'chart-bar' }}"></i></div><div class="card-wrap"><div class="card-header"><h4>{{ $label }}</h4></div><div class="card-body">{{ $value }} @if(isset($empty) && $empty)<small class="d-block text-muted">Belum ada data</small>@endif</div></div></div></div>
+@include('components.card-statistic', [
+    'icon' => $icon ?? 'bar-chart-2',
+    'variant' => $variant ?? ($color ?? 'neutral'),
+    'label' => $label,
+    'value' => $value,
+    'description' => $description ?? null,
+    'unavailable' => $unavailable ?? false,
+])
