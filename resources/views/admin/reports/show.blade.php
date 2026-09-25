@@ -36,7 +36,7 @@
                 </dl>
             </div>
             @if($report->revision_note)
-                <div class="alert alert-warning report-revision-note mb-0"><i class="fas fa-info-circle mr-2" aria-hidden="true"></i><span><strong>Catatan revisi:</strong> {{ $report->revision_note }}@if($report->reviewer) <small class="d-block mt-1">Oleh {{ $report->reviewer->name }}</small>@endif</span></div>
+                <div class="alert alert-warning report-revision-note mb-0" data-sweetalert-ignore><i class="fas fa-info-circle mr-2" aria-hidden="true"></i><span><strong>Catatan revisi:</strong> {{ $report->revision_note }}@if($report->reviewer) <small class="d-block mt-1">Oleh {{ $report->reviewer->name }}</small>@endif</span></div>
             @endif
         </div>
         @if($report->status->value === 'revisi')

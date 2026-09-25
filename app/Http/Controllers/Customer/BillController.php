@@ -23,7 +23,14 @@ class BillController extends Controller
     public function show(Bill $bill): View
     {
         $this->authorize('view', $bill);
-        $bill->load(['service', 'customer.user', 'payments.paymentMethod']);
+        $bill->load([
+            'service',
+            'customer.user',
+            'payments' => fn ($query) => $query
+                ->with('paymentMethod')
+                ->orderByDesc('paid_date')
+                ->orderByDesc('created_at'),
+        ]);
 
         return view('customer.bills.show', compact('bill'));
     }

@@ -16,6 +16,17 @@ return [
 
     'default' => env('MAIL_MAILER', 'log'),
 
+    'skip_dummy_emails' => filter_var(env('MAIL_SKIP_DUMMY_EMAILS', true), FILTER_VALIDATE_BOOL),
+
+    'dummy_email_domains' => [
+        'example.com',
+        'example.net',
+        'example.org',
+        'localhost',
+        'invalid',
+        'test',
+    ],
+
     /*
     |--------------------------------------------------------------------------
     | Mailer Configurations

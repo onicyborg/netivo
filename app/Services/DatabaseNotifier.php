@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Contracts\Notifier;
 use App\Enums\UserRole;
+use App\Mail\NotificationMail;
 use App\Models\Bill;
 use App\Models\Customer;
 use App\Models\DailyReport;
@@ -12,12 +13,17 @@ use App\Models\Payment;
 use App\Models\Receipt;
 use App\Models\ServiceUpgradeRequest;
 use App\Models\User;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class DatabaseNotifier implements Notifier
 {
     public function notifyUser(User $user, string $type, string $title, string $message, ?string $url = null): Notification
     {
-        return $user->notifications()->create(compact('type', 'title', 'message', 'url'));
+        $notification = $user->notifications()->create(compact('type', 'title', 'message', 'url'));
+        $this->sendEmail($user, $type, $title, $message, $url);
+
+        return $notification;
     }
 
     public function notifyRole(UserRole|string $role, string $type, string $title, string $message, ?string $url = null): int
@@ -32,6 +38,47 @@ class DatabaseNotifier implements Notifier
         });
 
         return $count;
+    }
+
+    private function sendEmail(User $user, string $type, string $title, string $message, ?string $url): void
+    {
+        if (! $this->isEmailCandidate($user->email)) {
+            return;
+        }
+
+        try {
+            Mail::to($user->email)->send(new NotificationMail($user->name, $title, $message, $url));
+        } catch (\Throwable $exception) {
+            Log::warning('Notification email could not be sent.', [
+                'notification_type' => $type,
+                'user_id' => $user->id,
+                'exception' => $exception::class,
+            ]);
+        }
+    }
+
+    private function isEmailCandidate(?string $email): bool
+    {
+        if (! $email || ! filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            return false;
+        }
+
+        if (! config('mail.skip_dummy_emails', true)) {
+            return true;
+        }
+
+        $domain = strtolower((string) strrchr($email, '@'));
+        $domain = ltrim($domain, '@');
+
+        foreach (config('mail.dummy_email_domains', []) as $dummyDomain) {
+            $dummyDomain = strtolower($dummyDomain);
+
+            if ($domain === $dummyDomain || str_ends_with($domain, '.'.$dummyDomain)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public function billCreated(Customer $customer, Bill $bill): void

@@ -93,10 +93,17 @@
         $(document).on('click', '.js-view-audit-snapshot', function () {
             var button = $(this);
             var formatSnapshot = function (value) {
+                var decodeHtml = function (encodedValue) {
+                    var decoder = document.createElement('textarea');
+                    decoder.innerHTML = encodedValue;
+
+                    return decoder.value;
+                };
+
                 try {
-                    return JSON.stringify(JSON.parse(value || '{}'), null, 2);
+                    return JSON.stringify(JSON.parse(decodeHtml(value || '{}')), null, 2);
                 } catch (error) {
-                    return value || '{}';
+                    return decodeHtml(value || '{}');
                 }
             };
 

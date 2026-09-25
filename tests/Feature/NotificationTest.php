@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Contracts\Notifier;
 use App\Enums\UserRole;
+use App\Mail\NotificationMail;
 use App\Models\Bill;
 use App\Models\Customer;
 use App\Models\Notification;
@@ -12,6 +13,7 @@ use App\Models\Receipt;
 use App\Models\Service;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Mail;
 use Tests\TestCase;
 
 class NotificationTest extends TestCase
@@ -20,6 +22,9 @@ class NotificationTest extends TestCase
 
     public function test_notifier_sends_each_available_trigger_to_the_correct_recipient(): void
     {
+        Mail::fake();
+        config(['mail.skip_dummy_emails' => false]);
+
         $admin = User::factory()->create(['role' => UserRole::ADMIN]);
         $inactiveAdmin = User::factory()->create(['role' => UserRole::ADMIN, 'is_active' => false]);
         $customer = Customer::factory()->create();
@@ -38,6 +43,7 @@ class NotificationTest extends TestCase
         $this->assertDatabaseHas('notifications', ['user_id' => $customer->user_id, 'type' => 'payment_rejected']);
         $this->assertDatabaseHas('notifications', ['user_id' => $admin->id, 'type' => 'payment_submitted']);
         $this->assertDatabaseMissing('notifications', ['user_id' => $inactiveAdmin->id]);
+        Mail::assertSent(NotificationMail::class, 4);
     }
 
     public function test_user_only_sees_and_marks_own_notifications(): void

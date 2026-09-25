@@ -25,7 +25,21 @@
                 return;
             }
 
-            var alerts = Array.from(document.querySelectorAll('.alert:not(.d-none):not([data-sweetalert-ignore])'));
+            var alerts = [];
+            var seenMessages = {};
+
+            document.querySelectorAll('.alert:not(.d-none):not([data-sweetalert-ignore])').forEach(function (element) {
+                var messageKey = element.textContent.replace(/\s+/g, ' ').trim();
+
+                if (seenMessages[messageKey]) {
+                    element.remove();
+                    return;
+                }
+
+                seenMessages[messageKey] = true;
+                alerts.push(element);
+                element.remove();
+            });
 
             function showNext(index) {
                 if (!alerts[index]) {
@@ -33,8 +47,6 @@
                 }
 
                 var alert = alerts[index];
-                alert.setAttribute('hidden', 'hidden');
-
                 window.Swal.fire({
                     toast: true,
                     position: 'top-end',

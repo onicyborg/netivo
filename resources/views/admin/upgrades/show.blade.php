@@ -8,6 +8,9 @@
 @error('upgrade')
     <div class="alert alert-danger">{{ $message }}</div>
 @enderror
+@error('rejection_reason')
+    <div class="alert alert-danger">{{ $message }}</div>
+@enderror
 
 <div class="row">
     <div class="col-12 col-lg-6">
@@ -39,13 +42,13 @@
                 @endif
 
                 @if($upgrade->status->value === 'pending')
-                    <form method="POST" action="{{ route('admin.upgrades.approve', $upgrade) }}" class="mb-2">
+                    <form id="approve-upgrade-form" method="POST" action="{{ route('admin.upgrades.approve', $upgrade) }}" class="mb-2">
                         @csrf
-                        <button class="btn btn-success btn-block" onclick="return confirm('Setujui perubahan layanan ini?')">
+                        <button type="button" id="approve-upgrade-button" class="btn btn-success btn-block">
                             <i class="fas fa-check"></i> Setujui Perubahan
                         </button>
                     </form>
-                    <button class="btn btn-danger btn-block" data-toggle="modal" data-target="#reject-upgrade-modal">
+                    <button type="button" id="reject-upgrade-button" class="btn btn-danger btn-block">
                         <i class="fas fa-times"></i> Tolak
                     </button>
                 @else
@@ -56,28 +59,57 @@
     </div>
 </div>
 
-<div class="modal fade" id="reject-upgrade-modal" tabindex="-1" role="dialog" aria-labelledby="reject-upgrade-title" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <form method="POST" action="{{ route('admin.upgrades.reject', $upgrade) }}">
-                @csrf
-                <div class="modal-header">
-                    <h5 id="reject-upgrade-title" class="modal-title">Tolak Perubahan Layanan</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Tutup"><span aria-hidden="true">&times;</span></button>
-                </div>
-                <div class="modal-body">
-                    <label for="rejection_reason">Alasan penolakan <span class="text-danger">*</span></label>
-                    <textarea id="rejection_reason" name="rejection_reason" class="form-control @error('rejection_reason') is-invalid @enderror" rows="4" required>{{ old('rejection_reason') }}</textarea>
-                    @error('rejection_reason')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-light" data-dismiss="modal">Batal</button>
-                    <button class="btn btn-danger">Tolak Pengajuan</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
+<form id="reject-upgrade-form" method="POST" action="{{ route('admin.upgrades.reject', $upgrade) }}" class="d-none">
+    @csrf
+    <input type="hidden" id="rejection-reason-value" name="rejection_reason" value="{{ old('rejection_reason') }}">
+</form>
 @endsection
+
+@push('scripts')
+<script>
+    $(function () {
+        $('#approve-upgrade-button').on('click', function () {
+            Swal.fire({
+                icon: 'question',
+                title: 'Setujui perubahan layanan?',
+                text: 'Perubahan layanan ini akan diproses untuk customer.',
+                showCancelButton: true,
+                confirmButtonText: 'Ya, setujui',
+                cancelButtonText: 'Batal',
+                reverseButtons: true,
+                focusCancel: true
+            }).then(function (result) {
+                if (result.isConfirmed) {
+                    $('#approve-upgrade-form').trigger('submit');
+                }
+            });
+        });
+
+        $('#reject-upgrade-button').on('click', function () {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Tolak perubahan layanan?',
+                input: 'textarea',
+                inputLabel: 'Alasan penolakan',
+                inputPlaceholder: 'Tuliskan alasan penolakan...',
+                inputAttributes: {
+                    'aria-label': 'Alasan penolakan'
+                },
+                inputValidator: function (value) {
+                    return !value || !value.trim() ? 'Alasan penolakan wajib diisi.' : undefined;
+                },
+                showCancelButton: true,
+                confirmButtonText: 'Ya, tolak perubahan',
+                cancelButtonText: 'Batal',
+                reverseButtons: true,
+                focusCancel: true
+            }).then(function (result) {
+                if (result.isConfirmed) {
+                    $('#rejection-reason-value').val(result.value.trim());
+                    $('#reject-upgrade-form').trigger('submit');
+                }
+            });
+        });
+    });
+</script>
+@endpush
