@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
     <link rel="stylesheet" href="{{ asset('css/components.css') }}">
     <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     @include('components.otika-font-fallback')
     @include('components.otika-overrides')
     @stack('styles')
@@ -32,6 +33,7 @@
     @stack('config-scripts')
     <script src="{{ asset('js/scripts.js') }}"></script>
     <script src="{{ asset('js/custom.js') }}"></script>
+    @include('components.sweetalert')
     @include('components.otika-table-tooltips')
     @include('components.modal-fix')
     @stack('scripts')
