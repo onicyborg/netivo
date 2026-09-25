@@ -47,7 +47,6 @@
                 </tbody>
             </table>
         </div>
-        {{ $logs->links() }}
     </div>
 </div>
 
@@ -88,11 +87,7 @@
         $('#system-logs-table').DataTable({
             pageLength: 10,
             ordering: true,
-            responsive: true,
-            searching: false,
-            paging: false,
-            info: false,
-            lengthChange: false
+            responsive: true
         });
 
         $(document).on('click', '.js-view-audit-snapshot', function () {
