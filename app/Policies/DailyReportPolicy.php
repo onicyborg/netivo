@@ -8,7 +8,7 @@ use App\Models\User;
 
 class DailyReportPolicy
 {
-    public function view(User $user, DailyReport $report): bool
+    public function view(User $user, ?DailyReport $report = null): bool
     {
         return $user->is_active && in_array($user->role, [UserRole::ADMIN, UserRole::SUPERVISOR], true);
     }

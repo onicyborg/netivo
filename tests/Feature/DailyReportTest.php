@@ -87,6 +87,7 @@ class DailyReportTest extends TestCase
         $supervisor = User::factory()->create(['role' => UserRole::SUPERVISOR]);
         $report = DailyReport::factory()->create(['created_by' => $admin->id]);
 
+        $this->actingAs($supervisor)->get(route('supervisor.reports.index'))->assertOk();
         $this->actingAs($supervisor)->post(route('admin.reports.store'), ['report_date' => '2026-09-25'])->assertForbidden();
         $this->actingAs($admin)->post(route('supervisor.reports.archive', $report))->assertForbidden();
     }
