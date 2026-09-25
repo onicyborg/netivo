@@ -35,7 +35,7 @@
 <div class="netivo-login">
     <div class="netivo-login__grid">
         <section class="netivo-login__intro" aria-label="Tentang Netivo">
-            <a class="netivo-login__brand" href="{{ url('/') }}"><img src="{{ asset('assets/logo/netivo.png') }}" alt="Logo Netivo" width="42" height="42"><span>Netivo</span></a>
+            <a class="netivo-login__brand" href="{{ url('/') }}"><img src="/assets/logo/netivo.png" alt="Logo Netivo" width="42" height="42"><span>Netivo</span></a>
             <div class="netivo-login__copy"><small>Sistem billing internet</small><h1>Kelola layanan tanpa alur yang rumit.</h1><p>Kelola customer, tagihan, pembayaran, dan laporan dari satu ruang kerja yang sederhana.</p></div>
             <span class="netivo-login__footer">&copy; {{ date('Y') }} Netivo</span>
         </section>

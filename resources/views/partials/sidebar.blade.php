@@ -1,6 +1,6 @@
 <div class="main-sidebar sidebar-style-2"><aside id="sidebar-wrapper">
-    <div class="sidebar-brand"><a href="{{ route('dashboard') }}"><img src="{{ asset('assets/logo/netivo.png') }}" alt="Logo Netivo" class="header-logo"><span class="logo-name">Netivo</span></a></div>
-    <div class="sidebar-brand sidebar-brand-sm"><a href="{{ route('dashboard') }}"><img src="{{ asset('assets/logo/netivo.png') }}" alt="Logo Netivo" class="header-logo"></a></div>
+    <div class="sidebar-brand"><a href="{{ route('dashboard') }}"><img src="/assets/logo/netivo.png" alt="Logo Netivo" class="header-logo"><span class="logo-name">Netivo</span></a></div>
+    <div class="sidebar-brand sidebar-brand-sm"><a href="{{ route('dashboard') }}"><img src="/assets/logo/netivo.png" alt="Logo Netivo" class="header-logo"></a></div>
     @php($role = auth()->user()->role->value)
     <ul class="sidebar-menu">
         <li class="menu-header">MENU UTAMA</li><li class="{{ request()->routeIs('admin.dashboard','supervisor.dashboard','customer.dashboard') ? 'active' : '' }}"><a class="nav-link" href="{{ route('dashboard') }}"><i data-feather="monitor"></i><span>Dashboard</span></a></li>
