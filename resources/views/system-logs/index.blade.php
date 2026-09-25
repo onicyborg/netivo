@@ -86,7 +86,7 @@
 <script>
     $(function () {
         $('#system-logs-table').DataTable({
-            pageLength: 25,
+            pageLength: 10,
             ordering: true,
             responsive: true,
             searching: false,
