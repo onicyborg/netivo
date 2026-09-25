@@ -32,6 +32,7 @@
     @stack('config-scripts')
     <script src="{{ asset('js/scripts.js') }}"></script>
     <script src="{{ asset('js/custom.js') }}"></script>
+    @include('components.otika-table-tooltips')
     @include('components.modal-fix')
     @stack('scripts')
 </body>
