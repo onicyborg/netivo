@@ -11,7 +11,7 @@ class PaymentProofController extends Controller
     public function show(Payment $payment): BinaryFileResponse
     {
         $this->authorize('proof', $payment);
-        $disk = Storage::disk('local');
+        $disk = Storage::disk('public');
 
         abort_unless($payment->proof_path && $disk->exists($payment->proof_path), 404);
 

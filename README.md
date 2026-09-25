@@ -27,7 +27,7 @@ Seeder menyediakan akun demo development berikut. Password semua akun adalah `Qw
 3. Konfigurasikan PostgreSQL untuk development. Untuk deployment MySQL, ubah `DB_CONNECTION=mysql` dan isi host, port, database, username, serta password MySQL. Migration dan seeder tetap kompatibel dengan keduanya.
 4. Jalankan `php artisan migrate`.
 5. Jalankan `php artisan db:seed` untuk membuat akun admin, supervisor, 10 customer, layanan, metode pembayaran, dan settings demo.
-6. Jalankan `php artisan storage:link` hanya untuk media publik aplikasi. Bukti pembayaran tetap disimpan di disk privat dan tidak boleh dipublikasikan.
+6. Jalankan `php artisan storage:link` agar file upload aplikasi tersedia melalui `public/storage`. Bukti pembayaran disimpan pada disk `public` di `storage/app/public/payment-proofs`.
 
 Asset Otika tidak memakai Vite. `ASSET_URL` default di `.env.example` adalah `https://otika.namikulo.com/assets`; ubah hanya bila deployment memakai mirror asset yang kompatibel. File aplikasi dari storage publik menggunakan URL `/storage/...`, sedangkan asset Otika menggunakan `asset()`.
 

@@ -50,7 +50,7 @@ class PaymentController extends Controller
             'proof.max' => 'Ukuran bukti pembayaran maksimal 2 MB.',
         ]);
 
-        $path = $request->file('proof')->store('payment-proofs', 'local');
+        $path = $request->file('proof')->store('payment-proofs', 'public');
 
         try {
             DB::transaction(function () use ($bill, $validated, $path, $notifier): void {
@@ -84,7 +84,7 @@ class PaymentController extends Controller
                 $notifier->paymentSubmitted($payment);
             });
         } catch (\Throwable $exception) {
-            Storage::disk('local')->delete($path);
+            Storage::disk('public')->delete($path);
             throw $exception;
         }
 

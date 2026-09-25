@@ -22,7 +22,7 @@ class CustomerPaymentTest extends TestCase
 
     public function test_customer_cannot_access_another_customers_bill_or_proof(): void
     {
-        Storage::fake('local');
+        Storage::fake('public');
         $owner = Customer::factory()->create();
         $other = Customer::factory()->create();
         $bill = Bill::factory()->create(['customer_id' => $owner->id]);
@@ -30,7 +30,7 @@ class CustomerPaymentTest extends TestCase
             'bill_id' => $bill->id,
             'proof_path' => 'payment-proofs/private-proof.pdf',
         ]);
-        Storage::disk('local')->put($payment->proof_path, 'proof');
+        Storage::disk('public')->put($payment->proof_path, 'proof');
 
         $this->actingAs($other->user)
             ->get(route('customer.bills.show', $bill))
@@ -45,7 +45,7 @@ class CustomerPaymentTest extends TestCase
 
     public function test_customer_can_submit_valid_payment_and_bill_enters_verification(): void
     {
-        Storage::fake('local');
+        Storage::fake('public');
         [$customer, $bill] = $this->customerWithBill();
         $method = PaymentMethod::factory()->create(['type' => PaymentMethodType::TRANSFER, 'is_active' => true]);
 
@@ -62,12 +62,12 @@ class CustomerPaymentTest extends TestCase
         $this->assertSame('250000.00', (string) $payment->amount);
         $this->assertSame(PaymentStatus::PENDING, $payment->status);
         $this->assertSame(BillStatus::MENUNGGU_VERIFIKASI, $bill->fresh()->status);
-        Storage::disk('local')->assertExists($payment->proof_path);
+        Storage::disk('public')->assertExists($payment->proof_path);
     }
 
     public function test_invalid_proof_type_and_size_are_rejected(): void
     {
-        Storage::fake('local');
+        Storage::fake('public');
         [$customer, $bill] = $this->customerWithBill();
         $method = PaymentMethod::factory()->create();
 
@@ -88,7 +88,7 @@ class CustomerPaymentTest extends TestCase
 
     public function test_second_pending_upload_is_rejected(): void
     {
-        Storage::fake('local');
+        Storage::fake('public');
         [$customer, $bill] = $this->customerWithBill();
         $method = PaymentMethod::factory()->create();
         $payload = fn () => [
@@ -105,7 +105,7 @@ class CustomerPaymentTest extends TestCase
 
     public function test_paid_bill_cannot_be_paid(): void
     {
-        Storage::fake('local');
+        Storage::fake('public');
         [$customer, $bill] = $this->customerWithBill(['status' => BillStatus::LUNAS]);
         $method = PaymentMethod::factory()->create();
 
