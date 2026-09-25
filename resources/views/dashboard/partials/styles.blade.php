@@ -2,7 +2,7 @@
     .dashboard-content > .dashboard-section { margin-bottom: 1.5rem; }
     .dashboard-content > .dashboard-section:last-child { margin-bottom: 0; }
     .dashboard-kpi { overflow: hidden; border: 1px solid #e8edf5; border-radius: 8px; box-shadow: 0 4px 14px rgba(52, 57, 94, .06); }
-    .dashboard-kpi .card-body { display: flex !important; flex-direction: row; align-items: center !important; min-height: 116px; padding: 1rem 1.15rem; }
+    .dashboard-kpi .card-body { display: flex !important; flex-direction: row; align-items: center !important; padding: 1rem 1.15rem; }
     .dashboard-kpi__icon { display: inline-flex; align-items: center; justify-content: center; flex: 0 0 48px; width: 48px; height: 48px; border-radius: 12px; }
     .dashboard-kpi__icon svg { width: 22px; height: 22px; stroke-width: 2.2; }
     .dashboard-kpi__copy { min-width: 0; margin-left: 14px; }
@@ -23,7 +23,6 @@
     .dashboard-summary { margin-bottom: 0; }
     .dashboard-content > .row.dashboard-section { align-items: stretch; }
     @media (max-width: 575.98px) {
-        .dashboard-kpi .card-body { min-height: 104px; }
         .dashboard-kpi__icon { flex-basis: 44px; width: 44px; height: 44px; }
         .dashboard-kpi__value { font-size: 19px; }
     }
