@@ -23,6 +23,7 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
+        'profile_photo_path',
         'password',
         'role',
         'is_active',
@@ -63,6 +64,13 @@ class User extends Authenticatable
     public function updatePreferences(array $preferences): void
     {
         $this->forceFill(['preferences' => array_replace_recursive($this->preferences ?? [], $preferences)])->save();
+    }
+
+    public function profilePhotoUrl(): string
+    {
+        return $this->profile_photo_path
+            ? url('storage/'.$this->profile_photo_path)
+            : asset('img/user.png');
     }
 
     public function customer(): \Illuminate\Database\Eloquent\Relations\HasOne
