@@ -28,6 +28,7 @@ class ServiceUpgradeTest extends TestCase
         $customer = Customer::factory()->create(['service_id' => $old->id]);
         $admin = User::factory()->create(['role' => UserRole::ADMIN]);
 
+        $this->actingAs($customer->user)->get(route('customer.services.index'))->assertOk();
         $this->actingAs($customer->user)->post(route('customer.services.upgrades.store'), ['to_service_id' => $new->id])->assertRedirect();
         $this->actingAs($customer->user)->post(route('customer.services.upgrades.store'), ['to_service_id' => $another->id])->assertSessionHasErrors('to_service_id');
 
