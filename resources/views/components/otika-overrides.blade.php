@@ -24,6 +24,7 @@
     .settingSidebar .theme-swatch.green { background: #28c76f; }
     .settingSidebar .theme-swatch.red { background: #ea5455; }
     .main-sidebar .sidebar-brand .header-logo { max-width: 42px; max-height: 42px; }
+    .main-sidebar .sidebar-brand-sm .header-logo { width: 34px; height: 34px; object-fit: contain; }
     :focus-visible { outline: 3px solid rgba(103,119,239,.45); outline-offset: 2px; }
     @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; } }
     @media (max-width: 575.98px) { .main-navbar .nav-link-user .nav-user-role { display: none; } .main-navbar .nav-link-user .nav-user-name { max-width: 92px; } .main-navbar .navbar-right > li + li { margin-left: 6px; } }
