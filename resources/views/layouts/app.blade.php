@@ -25,7 +25,6 @@
             <div class="section-header"><h1>@yield('page-title', 'Dashboard')</h1><div class="section-header-breadcrumb"><div class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></div>@hasSection('breadcrumb')<div class="breadcrumb-item active">@yield('breadcrumb')</div>@endif</div></div>
             <div class="section-body">@include('components.flash-message')@yield('content')</div>
         </section></div>
-        @include('partials.settings')
         @include('partials.footer')
     </div></div>
     <script src="{{ asset('js/app.min.js') }}"></script>
@@ -34,7 +33,6 @@
     <script src="{{ asset('js/scripts.js') }}"></script>
     <script src="{{ asset('js/custom.js') }}"></script>
     @include('components.modal-fix')
-    @include('components.otika-preferences-script', ['preferences' => $preferences])
     @stack('scripts')
 </body>
 </html>
