@@ -76,24 +76,24 @@ class DatabaseNotifier implements Notifier
     public function upgradeRequested(ServiceUpgradeRequest $request): void
     {
         $request->loadMissing('customer.user', 'toService');
-        $this->notifyRole(UserRole::ADMIN, 'upgrade_requested', 'Pengajuan upgrade baru', 'Customer '.$request->customer->customer_number.' mengajukan upgrade ke '.$request->toService->name.'.', route('admin.upgrades.show', $request));
+        $this->notifyRole(UserRole::ADMIN, 'upgrade_requested', 'Pengajuan perubahan layanan baru', 'Customer '.$request->customer->customer_number.' mengajukan perubahan layanan ke '.$request->toService->name.'.', route('admin.upgrades.show', $request));
     }
 
     public function upgradeApproved(ServiceUpgradeRequest $request): void
     {
         $request->loadMissing('customer.user', 'toService');
-        $this->notifyUser($request->customer->user, 'upgrade_approved', 'Upgrade layanan disetujui', 'Upgrade ke '.$request->toService->name.' dijadwalkan mulai periode '.$request->effective_period.'.', route('customer.services.index'));
+        $this->notifyUser($request->customer->user, 'upgrade_approved', 'Perubahan layanan disetujui', 'Perubahan layanan ke '.$request->toService->name.' dijadwalkan mulai periode '.$request->effective_period.'.', route('customer.services.index'));
     }
 
     public function upgradeRejected(ServiceUpgradeRequest $request): void
     {
         $request->loadMissing('customer.user');
-        $this->notifyUser($request->customer->user, 'upgrade_rejected', 'Upgrade layanan ditolak', 'Pengajuan upgrade layanan Anda ditolak: '.$request->note, route('customer.services.index'));
+        $this->notifyUser($request->customer->user, 'upgrade_rejected', 'Perubahan layanan ditolak', 'Pengajuan perubahan layanan Anda ditolak: '.$request->note, route('customer.services.index'));
     }
 
     public function upgradeApplied(ServiceUpgradeRequest $request): void
     {
         $request->loadMissing('customer.user', 'toService');
-        $this->notifyUser($request->customer->user, 'upgrade_applied', 'Upgrade layanan diterapkan', 'Layanan Anda sekarang adalah '.$request->toService->name.' untuk periode '.$request->effective_period.'.', route('customer.services.index'));
+        $this->notifyUser($request->customer->user, 'upgrade_applied', 'Perubahan layanan diterapkan', 'Layanan Anda sekarang adalah '.$request->toService->name.' untuk periode '.$request->effective_period.'.', route('customer.services.index'));
     }
 }

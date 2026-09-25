@@ -61,9 +61,9 @@
                         <h5>{{ $activeService->name }}</h5>
                         <p>{{ $activeService->speed_mbps }} Mbps · {{ format_rupiah($activeService->price) }} / bulan</p>
                         @if($upgrade && $upgrade->status->value === 'approved')
-                            <div class="alert alert-info mb-0">Dijadwalkan ke <strong>{{ $upgrade->toService->name }}</strong> mulai {{ $upgrade->effective_period }}.</div>
+                            <div class="alert alert-info mb-0">Perubahan layanan ke <strong>{{ $upgrade->toService->name }}</strong> dijadwalkan mulai {{ $upgrade->effective_period }}.</div>
                         @elseif($upgrade && $upgrade->status->value === 'pending')
-                            <div class="alert alert-warning mb-0">Pengajuan upgrade sedang menunggu keputusan.</div>
+                            <div class="alert alert-warning mb-0">Pengajuan upgrade / downgrade sedang menunggu keputusan.</div>
                         @else
                             <a href="{{ route('customer.services.index') }}">Kelola layanan</a>
                         @endif

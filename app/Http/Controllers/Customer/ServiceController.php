@@ -21,7 +21,7 @@ class ServiceController extends Controller
         $customer = Customer::query()->with('service')->where('user_id', $request->user()->id)->firstOrFail();
         $pending = $customer->serviceUpgradeRequests()->where('status', UpgradeStatus::PENDING)->with('toService')->latest()->first();
         $lastRequest = $customer->serviceUpgradeRequests()->with(['fromService', 'toService'])->latest()->first();
-        $services = Service::query()->where('is_active', true)->where('id', '<>', $customer->service_id)->orderBy('name')->get();
+        $services = Service::query()->where('is_active', true)->where('id', '<>', $customer->service_id)->orderBy('speed_mbps')->orderBy('name')->get();
 
         return view('customer/services/index', compact('customer', 'pending', 'lastRequest', 'services'));
     }
@@ -35,7 +35,7 @@ class ServiceController extends Controller
         DB::transaction(function () use ($request, $validated, $notifier, &$error): void {
             $customer = Customer::query()->lockForUpdate()->with('service')->where('user_id', $request->user()->id)->firstOrFail();
             if ($customer->serviceUpgradeRequests()->where('status', UpgradeStatus::PENDING)->exists()) {
-                $error = 'Masih ada satu pengajuan upgrade yang menunggu keputusan.';
+                $error = 'Masih ada satu pengajuan perubahan layanan yang menunggu keputusan.';
                 return;
             }
 
@@ -56,6 +56,6 @@ class ServiceController extends Controller
             return back()->withErrors(['to_service_id' => $error]);
         }
 
-        return back()->with('success', 'Pengajuan upgrade berhasil dikirim ke admin.');
+        return back()->with('success', 'Pengajuan upgrade/downgrade berhasil dikirim ke admin.');
     }
 }

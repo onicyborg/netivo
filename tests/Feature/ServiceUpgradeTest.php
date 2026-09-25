@@ -37,6 +37,25 @@ class ServiceUpgradeTest extends TestCase
         $this->assertDatabaseHas('notifications', ['user_id' => $admin->id, 'type' => 'upgrade_requested']);
     }
 
+    public function test_customer_can_submit_a_downgrade_to_an_active_lower_service(): void
+    {
+        $current = Service::factory()->create(['price' => 200000, 'speed_mbps' => 20]);
+        $lower = Service::factory()->create(['price' => 100000, 'speed_mbps' => 10]);
+        $customer = Customer::factory()->create(['service_id' => $current->id]);
+
+        $this->actingAs($customer->user)
+            ->post(route('customer.services.upgrades.store'), ['to_service_id' => $lower->id])
+            ->assertRedirect()
+            ->assertSessionHasNoErrors();
+
+        $this->assertDatabaseHas('service_upgrade_requests', [
+            'customer_id' => $customer->id,
+            'from_service_id' => $current->id,
+            'to_service_id' => $lower->id,
+            'status' => UpgradeStatus::PENDING->value,
+        ]);
+    }
+
     public function test_approval_uses_next_period_across_year_boundary_and_applies_before_effective_bill(): void
     {
         Carbon::setTestNow(Carbon::parse('2026-12-15', config('app.timezone')));
