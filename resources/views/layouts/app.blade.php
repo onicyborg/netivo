@@ -34,6 +34,7 @@
     <script src="{{ asset('js/scripts.js') }}"></script>
     <script src="{{ asset('js/custom.js') }}"></script>
     @include('components.sweetalert')
+    @include('components.admin-table-actions')
     @include('components.otika-table-tooltips')
     @include('components.modal-fix')
     @stack('scripts')
