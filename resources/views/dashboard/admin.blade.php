@@ -10,7 +10,7 @@
 
 @section('content')
 <div class="dashboard-content">
-    <div class="dashboard-section"><div class="alert alert-light border dashboard-summary">Ringkasan periode <strong>{{ $period }}</strong></div></div>
+    <div class="dashboard-section"><div class="dashboard-period-summary"><i data-feather="calendar" aria-hidden="true"></i><span>Periode aktif</span><strong>{{ $period }}</strong></div></div>
 
     <div class="row dashboard-section">
         @include('components.card-statistic', ['label' => 'Total Tagihan', 'value' => $billTotal, 'icon' => 'file-text', 'variant' => 'neutral', 'description' => $billTotal === 0 ? 'Tidak ada tagihan periode ini' : 'Tagihan pada periode ini'])

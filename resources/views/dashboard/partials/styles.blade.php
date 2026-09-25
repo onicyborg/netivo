@@ -20,7 +20,9 @@
     .dashboard-empty-state__icon { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; margin-bottom: .75rem; border-radius: 50%; background: #f0f2f5; color: #7b8794; }
     .dashboard-empty-state__icon svg { width: 21px; height: 21px; stroke-width: 2; }
     .dashboard-empty-state .lead { margin-bottom: 0; color: #5f6b7a; font-size: 14px; }
-    .dashboard-summary { margin-bottom: 0; }
+    .dashboard-period-summary { display: flex; align-items: center; gap: .65rem; min-height: 44px; padding: .65rem .9rem; border: 1px solid #e3e8f1; border-left: 3px solid #6777ef; border-radius: 6px; background: #f8f9fc; color: #7a869a; font-size: 12px; }
+    .dashboard-period-summary svg { width: 16px; height: 16px; color: #6777ef; stroke-width: 2.2; }
+    .dashboard-period-summary strong { color: #34395e; font-size: 13px; font-weight: 700; }
     .dashboard-content > .row.dashboard-section { align-items: stretch; }
     @media (max-width: 575.98px) {
         .dashboard-kpi__icon { flex-basis: 44px; width: 44px; height: 44px; }
